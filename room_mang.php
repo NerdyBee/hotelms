@@ -327,6 +327,22 @@
                                     <input type="number" class="form-control" id="advance_payment"
                                            placeholder="Please Enter Amounts Here..">
                                 </div>
+                                <div class="form-group col-lg-12">
+                                    <label>Payment Type</label>
+                                    <select class="form-control" id="payment_type" required
+                                            data-error="Select Payment Type">
+                                        <option selected disabled>Select Payment Type</option>
+                                        <?php
+                                        $query = "SELECT * FROM payment_type";
+                                        $result = mysqli_query($connection, $query);
+                                        if (mysqli_num_rows($result) > 0) {
+                                            while ($payment_type = mysqli_fetch_assoc($result)) {
+                                                echo '<option value="' . $payment_type['payment_type'] . '">' . $payment_type['payment_type'] . '</option>';
+                                            }
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
                                 <input type="hidden" id="getBookingID" value="">
                                 <button type="submit" class="btn btn-primary pull-right">Payment & Check In</button>
                             </form>
@@ -393,6 +409,22 @@
                                            data-error="Please Enter Remaining Amount">
                                     <div class="help-block with-errors"></div>
                                 </div>
+                                <div class="form-group col-lg-12">
+                                    <label>Payment Type</label>
+                                    <select class="form-control" id="payment_type" required
+                                            data-error="Select Payment Type">
+                                        <option selected disabled>Select Payment Type</option>
+                                        <?php
+                                        $query = "SELECT * FROM payment_type";
+                                        $result = mysqli_query($connection, $query);
+                                        if (mysqli_num_rows($result) > 0) {
+                                            while ($payment_type = mysqli_fetch_assoc($result)) {
+                                                echo '<option value="' . $payment_type['payment_type'] . '">' . $payment_type['payment_type'] . '</option>';
+                                            }
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
                                 <input type="hidden" id="getBookingId_n" value="">
                                 <button type="submit" class="btn btn-primary pull-right">Proceed Checkout</button>
                             </form>
@@ -458,6 +490,22 @@
                                            placeholder="Make Payment" required
                                            data-error="Please Enter valid Amount">
                                     <div class="help-block with-errors"></div>
+                                </div>
+                                <div class="form-group col-lg-12">
+                                    <label>Payment Type</label>
+                                    <select class="form-control" id="payment_type" required
+                                            data-error="Select Payment Type">
+                                        <option selected disabled>Select Payment Type</option>
+                                        <?php
+                                        $query = "SELECT * FROM payment_type";
+                                        $result = mysqli_query($connection, $query);
+                                        if (mysqli_num_rows($result) > 0) {
+                                            while ($payment_type = mysqli_fetch_assoc($result)) {
+                                                echo '<option value="' . $payment_type['payment_type'] . '">' . $payment_type['payment_type'] . '</option>';
+                                            }
+                                        }
+                                        ?>
+                                    </select>
                                 </div>
                                 <input type="hidden" id="getBookingId_p" value="">
                                 <button type="submit" class="btn btn-primary pull-right">Proceed Payment</button>

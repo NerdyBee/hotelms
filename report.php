@@ -40,6 +40,7 @@
                             <th>Booking Date</th>
                             <th>Check In</th>
                             <th>Check Out</th>
+                            <th>Discount</th>
                             <th>Total</th>
                             <th>Outstanding</th>
                             <th>Added By</th>
@@ -61,6 +62,7 @@
                                     <td><?php echo date('M j, Y', strtotime($staff['booking_date'])); ?></td>
                                     <td><?php echo $staff['check_in']; ?></td>
                                     <td><?php echo $staff['check_out']; ?></td>
+                                    <td><?php echo number_format($staff['discount']); ?></td>
                                     <td><?php echo number_format($staff['total_price']); ?></td>
                                     <td><?php echo number_format($staff['remaining_price']); ?></td>
                                     <td><?php echo $staff['added_by']; ?></td>

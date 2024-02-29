@@ -125,11 +125,10 @@ if (isset($_POST['edit_item'])) {
     $item = $_POST['item'];
     $category = $_POST['category'];
     $price = $_POST['price'];
-    $quantity = $_POST['quantity'];
     $item_id = $_POST['item_id'];
 
-    if ($room_no != '') {
-        $query = "UPDATE inventory SET item = '$item',category = '$category,'price = '$price',quantity = '$quantity' where item_id = '$item_id'";
+    if ($item != '' && isset($category) && $category != '') {
+        $query = "UPDATE inventory SET item = '$item',category = '$category',price = '$price' where item_id = '$item_id'";
         $result = mysqli_query($connection, $query);
 
         if ($result) {
@@ -154,16 +153,22 @@ if (isset($_POST['edit_room_type'])) {
     $price = $_POST['price'];
     $room_type = $_POST['room_type'];
 
-    if ($room_no != '') {
-        $query = "UPDATE room_type SET room_type = '$room_type',price = '$price' where room_type_id = '$room_type_id'";
-        $result = mysqli_query($connection, $query);
-
-        if ($result) {
-            $response['done'] = true;
-            $response['data'] = 'Successfully Edit Room';
-        } else {
+    if ($room_type_id != '') {
+        $sql = "SELECT * FROM room_type WHERE room_type = '$room_type' AND room_type_id <> '$room_type_id'";
+        if (mysqli_num_rows(mysqli_query($connection, $sql)) >= 1) {
             $response['done'] = false;
-            $response['data'] = "DataBase Error";
+            $response['data'] = "Room Type Already Exist";
+        } else {
+            $query = "UPDATE room_type SET room_type = '$room_type',price = '$price' where room_type_id = '$room_type_id'";
+            $result = mysqli_query($connection, $query);
+
+            if ($result) {
+                $response['done'] = true;
+                $response['data'] = 'Successfully Edit Room';
+            } else {
+                $response['done'] = false;
+                $response['data'] = "DataBase Error";
+            }
         }
 
     } else {
@@ -279,13 +284,14 @@ if (isset($_POST['booking'])) {
     $id_card_id = $_POST['id_card_id'];
     $id_card_no = $_POST['id_card_no'];
     $address = $_POST['address'];
+    $added_by = $_SESSION['user_id'];
 
     $customer_sql = "INSERT INTO customer (customer_name,contact_no,email,id_card_type_id,id_card_no,address) VALUES ('$name','$contact_no','$email','$id_card_id','$id_card_no','$address')";
     $customer_result = mysqli_query($connection, $customer_sql);
     // if($discount <= ((40 / 100) * $total_price)){
         if ($customer_result) {
             $customer_id = mysqli_insert_id($connection);
-            $booking_sql = "INSERT INTO booking (customer_id,room_id,check_in,check_out,total_price,remaining_price) VALUES ('$customer_id','$room_id','$check_in','$check_out','$total_price','$total_price')";
+            $booking_sql = "INSERT INTO booking (customer_id,room_id,check_in,check_out,total_price,remaining_price,added_by) VALUES ('$customer_id','$room_id','$check_in','$check_out','$total_price','$total_price','$added_by')";
             $booking_result = mysqli_query($connection, $booking_sql);
             if ($booking_result) {
                 $room_stats_sql = "UPDATE room SET status = '1' WHERE room_id = '$room_id'";
@@ -406,6 +412,8 @@ if (isset($_POST['booked_room'])) {
 if (isset($_POST['check_in_room'])) {
     $booking_id = $_POST['booking_id'];
     $advance_payment = $_POST['advance_payment'];
+    $payment_type = $_POST['payment_type'];
+    $added_by = $_SESSION['user_id'];
 
     if ($booking_id != '') {
         $query = "select * from booking where booking_id = '$booking_id'";
@@ -420,7 +428,14 @@ if (isset($_POST['check_in_room'])) {
             $updateRoom = "UPDATE room SET check_in_status = '1' WHERE room_id = '$room_id'";
             $updateResult = mysqli_query($connection, $updateRoom);
             if ($updateResult) {
-                $response['done'] = true;
+                $paymentHistory = "INSERT INTO payment_history(booking_id,payment_type_id,amount,added_by) VALUES ('$booking_id', '$payment_type', '$advance_payment', '$added_by')";
+                $paymentResult = mysqli_query($connection, $paymentHistory);
+                if ($paymentResult) {
+                    $response['done'] = true;
+                } else {
+                    $response['done'] = false;
+                    $response['data'] = "Problem in adding payment history";
+                }
             } else {
                 $response['done'] = false;
                 $response['data'] = "Problem in Update Room Check in status";
@@ -439,6 +454,8 @@ if (isset($_POST['check_in_room'])) {
 if (isset($_POST['check_out_room'])) {
     $booking_id = $_POST['booking_id'];
     $remaining_amount = $_POST['remaining_amount'];
+    $payment_type = $_POST['payment_type'];
+    $added_by = $_SESSION['user_id'];
 
     if ($booking_id != '') {
         $query = "select * from booking where booking_id = '$booking_id'";
@@ -454,7 +471,14 @@ if (isset($_POST['check_out_room'])) {
                 $updateRoom = "UPDATE room SET status = NULL,check_in_status = '0',check_out_status = '1' WHERE room_id = '$room_id'";
                 $updateResult = mysqli_query($connection, $updateRoom);
                 if ($updateResult) {
-                    $response['done'] = true;
+                    $paymentHistory = "INSERT INTO payment_history(booking_id,payment_type_id,amount,added_by) VALUES ('$booking_id', '$payment_type', '$remaining_amount', '$added_by')";
+                    $paymentResult = mysqli_query($connection, $paymentHistory);
+                    if ($paymentResult) {
+                        $response['done'] = true;
+                    } else {
+                        $response['done'] = false;
+                        $response['data'] = "Problem in adding payment history";
+                    }
                 } else {
                     $response['done'] = false;
                     $response['data'] = "Problem in Update Room Check in status";
@@ -478,6 +502,8 @@ if (isset($_POST['check_out_room'])) {
 if (isset($_POST['more_payment'])) {
     $booking_id = $_POST['booking_id'];
     $remaining_amount = $_POST['remaining_amount'];
+    $payment_type = $_POST['payment_type'];
+    $added_by = $_SESSION['user_id'];
 
     if ($booking_id != '') {
         $query = "select * from booking where booking_id = '$booking_id'";
@@ -486,13 +512,25 @@ if (isset($_POST['more_payment'])) {
         $room_id = $booking_details['room_id'];
         $remaining_price = $booking_details['remaining_price'];
 
-        if ($remaining_amount != 0) {
+        if ($remaining_amount != 0 && isset($payment_type)) {
             $updateBooking = "UPDATE booking SET remaining_price = remaining_price - $remaining_amount where booking_id = '$booking_id'";
             $result = mysqli_query($connection, $updateBooking);
-            $response['done'] = true;
+            if ($result) {
+                $paymentHistory = "INSERT INTO payment_history(booking_id,payment_type_id,amount,added_by) VALUES ('$booking_id', '$payment_type', '$remaining_amount', '$added_by')";
+                $paymentResult = mysqli_query($connection, $paymentHistory);
+                if ($paymentResult) {
+                    $response['done'] = true;
+                } else {
+                    $response['done'] = false;
+                    $response['data'] = "Problem in adding payment history";
+                }
+            } else {
+                $response['done'] = false;
+                $response['data'] = "Please Enter Amount Paid here";
+            }
         } else {
             $response['done'] = false;
-            $response['data'] = "Please Enter Full Payment here";
+            $response['data'] = "Please Enter Full Payment and Payment Type";
         }
     } else {
         $response['done'] = false;
@@ -580,20 +618,21 @@ if (isset($_POST['createInvoice'])) {
 if(isset($_POST['saveInvoice'])) {
     $room = $_POST['room'];
     $paid = $_POST['paid'];
+    $payment_type = $_POST['payment_type'];
     $total_price = $_POST['total_price'];
     $inv = $_POST['invoice_no'];
 
-    $query = "UPDATE invoice set paid = '$paid', room_id = '$room', total_price = $total_price WHERE id = '$inv'";
+    $query = "UPDATE invoice set paid = '$paid', room_id = '$room', payment_type_id = '$payment_type', total_price = $total_price WHERE id = '$inv'";
     $result = mysqli_query($connection, $query);
     if(isset($room) && $room != '' && $room != ' '){
         $booking_query = "UPDATE booking set remaining_price = remaining_price + '$total_price' WHERE room_id = '$room'";
         $booking_result = mysqli_query($connection, $booking_query);
     }
 
-    if ($result && $booking_result) {
+    if ($result) {
         header("Location:index.php?bar");
     } else {
-        header("Location:index.php?sales&error");
+        header("Location:index.php?sales&error&" . mysqli_error($connection));
     }
 }
 

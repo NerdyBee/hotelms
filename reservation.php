@@ -74,14 +74,16 @@ if (isset($_GET['room_id'])){
                                 </div>
                                 <div class="form-group col-lg-6">
                                     <label>Discount</label>
-                                    <input type="number" class="form-control" id="discount" data-error="Discount can't be more than 40% of cost">
+                                    <input type="number" class="form-control" onblur="myFunction()" id="discount" data-error="Discount can't be more than 40% of cost">
                                     <div class="help-block with-errors"></div>
                                 </div>
 
                                 <div class="col-lg-12">
-                                    <h4 style="font-weight: bold">Total Days : <span id="staying_day">0</span> Days</h4>
-                                    <h4 style="font-weight: bold">Price: <span id="price"><?php echo $get_room_price; ?></span> /-</h4>
-                                    <h4 style="font-weight: bold">Total Amount : <span id="total_price">0</span> /-</h4>
+                                    <h4 style="font-weight: bold">Total Days : <span id="staying_day">0</span> Day(s)</h4>
+                                    <h4 style="font-weight: bold">Price: ₦<span id="price"><?php echo $get_room_price; ?></span> </h4>
+                                    <h4 style="font-weight: bold">Total Amount : ₦<span id="total_price">0</span> </h4>
+                                    <h4 style="font-weight: bold">Discount : ₦<span id="disco">0</span> </h4>
+                                    <h4 style="font-weight: bold">Total Paying : ₦<span id="total_pay">0</span> </h4>
                                 </div>
                             </div>
                         </div>
@@ -129,16 +131,16 @@ if (isset($_GET['room_id'])){
 
                                 <div class="form-group col-lg-6">
                                     <label>Discount</label>
-                                    <input type="number" class="form-control" id="discount" data-error="Discount can't be more than 40% of cost">
+                                    <input type="number" class="form-control" onblur="myFunction()" id="discount" data-error="Discount can't be more than 40% of cost">
                                     <div class="help-block with-errors"></div>
                                 </div>
 
                                 <div class="col-lg-12">
-                                    <h4 style="font-weight: bold">Total Days : <span id="staying_day">0</span> Days</h4>
+                                    <h4 style="font-weight: bold">Total Days : <span id="staying_day">0</span> Day(s)</h4>
                                     <h4 style="font-weight: bold">Price: ₦<span id="price">0</span> </h4>
                                     <h4 style="font-weight: bold">Total Amount : ₦<span id="total_price">0</span> </h4>
-                                    <!-- <h4 style="font-weight: bold">Discount : ₦<span id="disco">0</span> </h4>
-                                    <h4 style="font-weight: bold">Total Paying : ₦<span id="total_pay">0</span> </h4> -->
+                                    <h4 style="font-weight: bold">Discount : ₦<span id="disco">0</span> </h4>
+                                    <h4 style="font-weight: bold">Total Paying : ₦<span id="total_pay">0</span> </h4>
                                 </div>
                             </div>
                         </div>

@@ -208,12 +208,6 @@
                                            data-error="Enter Item Price">
                                     <div class="help-block with-errors"></div>
                                 </div>
-                                <div class="form-group">
-                                    <label>Stock</label>
-                                    <input type="number" class="form-control" placeholder="Stock" id="edit_quantity" required
-                                           data-error="Enter Item Stock">
-                                    <div class="help-block with-errors"></div>
-                                </div>
                                 <input type="hidden" id="edit_item_id">
                                 <button class="btn btn-success pull-right">Edit Item</button>
                             </form>

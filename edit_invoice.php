@@ -154,6 +154,30 @@
                         <form role="form" id="bar" data-toggle="validator" method="post" action="ajax.php">    
                             <div class="col-md-12">
                                 <div class="form-group col-lg-6">
+                                    <label>Payment Type</label>
+                                    <select class="form-control" id="payment_type" name="payment_type"
+                                            data-error="Select Payment Type">
+                                        <option selected disabled>Select Payment Type</option>
+                                        <?php
+                                        $query = "SELECT * FROM payment_type";
+                                        $result = mysqli_query($connection, $query);
+                                        if (mysqli_num_rows($result) > 0) {
+                                            while ($payment_type = mysqli_fetch_assoc($result)) {
+                                                echo '<option value="' . $payment_type['payment_type_id'] . '">' . $payment_type['payment_type'] . '</option>';
+                                            }
+                                        }
+                                        ?>
+                                    </select>
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                                
+                                <div class="form-group col-lg-6">
+                                    <label>Paid</label>
+                                    <input type="text" class="form-control" id="paid" name="paid" autocomplete="false" />
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                                
+                                <div class="form-group col-lg-6">
                                     <label>Room</label>
                                     <select class="form-control" name="room" id="room_no" data-error="Select Room Type">
                                         <option selected disabled>Select Room</option>
@@ -168,21 +192,7 @@
                                     </select>
                                     <div class="help-block with-errors"></div>
                                 </div>
-
-                                <!-- <div class="form-group col-lg-6">
-                                    <label>Room No</label>
-                                    <select class="form-control" name="room" id="room_no" data-error="Select Room No">
-                                        <option value=" " selected>&nbsp;</option>
-
-                                    </select>
-                                    <div class="help-block with-errors"></div>
-                                </div> -->
-                                <div class="form-group col-lg-6">
-                                    <label>Paid</label>
-                                    <input type="text" class="form-control" id="paid" name="paid" autocomplete="false" />
-                                    <div class="help-block with-errors"></div>
-                                </div>
-                                <input type="hidden" name="invoice_no" id="invoice_no" value="<?php echo $inv ?>" />
+                                <input type="hidden" name="invoice_no" id="invoice_no" value="<?php echo $invId ?>" />
                                 <input type="hidden" name="total_price" id="total_price" value="<?php echo $tot ?>" />
 
                             </div>

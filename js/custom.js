@@ -54,9 +54,10 @@ var checkout = $("#check_out_date")
     checkout.hide();
     var totalDays = Math.floor((checkout.date - checkin.date) / 86400000);
     var price = document.getElementById("price").innerHTML;
-    var total_price = (totalDays + 1) * price;
-    $("#staying_day").html(totalDays + 1);
-    $("#total_price").html(total_price);
+    var discount = document.getElementById("discount").value;
+    var total_price = totalDays * price;
+    $("#staying_day").html(totalDays);
+    $("#total_price").html(total_price - discount);
   })
   .data("datepicker");
 

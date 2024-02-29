@@ -1,33 +1,3 @@
-$("#addRoomType").submit(function () {
-  var room_type = $("#room_type").val();
-  var price = $("#price").val();
-
-  $.ajax({
-    type: "post",
-    url: "ajax.php",
-    dataType: "JSON",
-    data: {
-      room_type: room_type,
-      price: price,
-      add_room_type: "",
-    },
-    success: function (response) {
-      if (response.done == true) {
-        $("#addRoomType").modal("hide");
-        window.location.href = "index.php?room_type";
-      } else {
-        $(".response").html(
-          '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>' +
-            response.data +
-            "</div>"
-        );
-      }
-    },
-  });
-
-  return false;
-});
-
 $("#addRoom").submit(function () {
   var room_type_id = $("#room_type_id").val();
   var room_no = $("#room_no").val();
@@ -47,38 +17,6 @@ $("#addRoom").submit(function () {
         window.location.href = "index.php?room_mang";
       } else {
         $(".response").html(
-          '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>' +
-            response.data +
-            "</div>"
-        );
-      }
-    },
-  });
-
-  return false;
-});
-
-$("#roomTypeEditFrom").submit(function () {
-  var room_type = $("#edit_room_type").val();
-  var price = $("#edit_price").val();
-  var room_type_id = $("#edit_room_type_id").val();
-
-  $.ajax({
-    type: "post",
-    url: "ajax.php",
-    dataType: "JSON",
-    data: {
-      room_type_id: room_type_id,
-      price: price,
-      room_type: room_type,
-      edit_room_type: "",
-    },
-    success: function (response) {
-      if (response.done == true) {
-        $("#editRoomType").modal("hide");
-        window.location.href = "index.php?room_type";
-      } else {
-        $(".edit_response").html(
           '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>' +
             response.data +
             "</div>"
@@ -120,106 +58,6 @@ $("#roomEditFrom").submit(function () {
   });
 
   return false;
-});
-
-$("#itemEditFrom").submit(function () {
-  var item = $("#edit_item").val();
-  var category = $("#edit_category").val();
-  var price = $("#edit_price").val();
-  var quantity = $("#edit_quantity").val();
-  var item_id = $("#edit_item_id").val();
-
-  $.ajax({
-    type: "post",
-    url: "ajax.php",
-    dataType: "JSON",
-    data: {
-      item_id: item_id,
-      item: item,
-      category: category,
-      price: price,
-      quantity: quantity,
-      edit_item: "",
-    },
-    success: function (response) {
-      if (response.done == true) {
-        $("#editItem").modal("hide");
-        window.location.href = "index.php?inventory";
-      } else {
-        $(".response").html(
-          '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>' +
-            response.data +
-            "</div>"
-        );
-      }
-    },
-  });
-
-  return false;
-});
-
-$(document).on("click", "#itemEdit", function (e) {
-  e.preventDefault();
-
-  var item_id = $(this).data("id");
-
-  console.log(item_id);
-
-  $.ajax({
-    type: "post",
-    url: "ajax.php",
-    dataType: "JSON",
-    data: {
-      item_id: item_id,
-      item_edit: "",
-    },
-    success: function (response) {
-      if (response.done == true) {
-        $("#edit_item").val(response.item);
-        $("#edit_category").val(response.category);
-        $("#edit_price").val(response.price);
-        $("#edit_quantity").val(response.quantity);
-        $("#edit_item_id").val(item_id);
-      } else {
-        $(".edit_response").html(
-          '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>' +
-            response.data +
-            "</div>"
-        );
-      }
-    },
-  });
-});
-
-$(document).on("click", "#roomTypeEdit", function (e) {
-  e.preventDefault();
-
-  var room_type_id = $(this).data("id");
-
-  console.log(room_type_id);
-
-  $.ajax({
-    type: "post",
-    url: "ajax.php",
-    dataType: "JSON",
-    data: {
-      room_type_id: room_type_id,
-      room_type_edit: "",
-    },
-    success: function (response) {
-      if (response.done == true) {
-        $("#edit_room_type").val(response.room_type);
-        $("#edit_price").val(response.price);
-        $("#edit_room_type_id").val(room_type_id);
-      } else {
-        $(".edit_response").html(
-          '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>' +
-            response.data +
-            "</div>"
-        );
-      }
-    },
-  });
 });
 
 $(document).on("click", "#roomEdit", function (e) {
@@ -373,6 +211,7 @@ $("#booking").submit(function () {
       '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>Dsicount Cannot be more than 40%</div>'
     );
   } else {
+    console.log(total_price);
     $.ajax({
       type: "post",
       url: "ajax.php",
@@ -524,6 +363,7 @@ $(document).on("click", "#checkInRoom", function (e) {
 $("#advancePayment").submit(function () {
   var booking_id = $("#getBookingID").val();
   var advance_payment = $("#advance_payment").val();
+  var payment_type = $("#payment_type").val();
 
   $.ajax({
     type: "post",
@@ -532,6 +372,7 @@ $("#advancePayment").submit(function () {
     data: {
       booking_id: booking_id,
       advance_payment: advance_payment,
+      payment_type: payment_type,
       check_in_room: "",
     },
     success: function (response) {
@@ -585,6 +426,7 @@ $(document).on("click", "#checkOutRoom", function (e) {
 $("#checkOutRoom_n").submit(function () {
   var booking_id = $("#getBookingId_n").val();
   var remaining_amount = $("#remaining_amount").val();
+  var payment_type = $("#payment_type").val();
 
   console.log(booking_id);
 
@@ -595,6 +437,7 @@ $("#checkOutRoom_n").submit(function () {
     data: {
       booking_id: booking_id,
       remaining_amount: remaining_amount,
+      payment_type: payment_type,
       check_out_room: "",
     },
     success: function (response) {

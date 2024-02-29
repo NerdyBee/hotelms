@@ -30,7 +30,7 @@
                     <form role="form"  data-toggle="validator" method="post" action="ajax.php">
                         <div class="row">
                             <div class="form-group col-lg-6">
-                                <input type="hidden" class="form-control" placeholder="Customer" value="Customer" name="customer" required>
+                                <input type="text" class="form-control" placeholder="Table 1" value="Table" name="customer" required>
                                 <div class="help-block with-errors"></div>
                             </div>
                         </div>
