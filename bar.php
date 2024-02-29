@@ -157,7 +157,7 @@
                                             $result = mysqli_query($connection, $query);
                                             if (mysqli_num_rows($result) > 0) {
                                                 while ($payment_type = mysqli_fetch_assoc($result)) {
-                                                    echo '<option value="' . $payment_type['payment_type_id'] . '">' . $payment_type['payment_type'] . '</option>';
+                                                    echo '<option value="' . $payment_type['payment_type'] . '">' . $payment_type['payment_type'] . '</option>';
                                                 }
                                             }
                                         ?>

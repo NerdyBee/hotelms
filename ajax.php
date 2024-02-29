@@ -428,7 +428,7 @@ if (isset($_POST['check_in_room'])) {
             $updateRoom = "UPDATE room SET check_in_status = '1' WHERE room_id = '$room_id'";
             $updateResult = mysqli_query($connection, $updateRoom);
             if ($updateResult) {
-                $paymentHistory = "INSERT INTO payment_history(booking_id,payment_type_id,amount,added_by) VALUES ('$booking_id', '$payment_type', '$advance_payment', '$added_by')";
+                $paymentHistory = "INSERT INTO payment_history(booking_id,payment_type,amount,added_by) VALUES ('$booking_id', '$payment_type', '$advance_payment', '$added_by')";
                 $paymentResult = mysqli_query($connection, $paymentHistory);
                 if ($paymentResult) {
                     $response['done'] = true;
@@ -471,7 +471,7 @@ if (isset($_POST['check_out_room'])) {
                 $updateRoom = "UPDATE room SET status = NULL,check_in_status = '0',check_out_status = '1' WHERE room_id = '$room_id'";
                 $updateResult = mysqli_query($connection, $updateRoom);
                 if ($updateResult) {
-                    $paymentHistory = "INSERT INTO payment_history(booking_id,payment_type_id,amount,added_by) VALUES ('$booking_id', '$payment_type', '$remaining_amount', '$added_by')";
+                    $paymentHistory = "INSERT INTO payment_history(booking_id,payment_type,amount,added_by) VALUES ('$booking_id', '$payment_type', '$remaining_amount', '$added_by')";
                     $paymentResult = mysqli_query($connection, $paymentHistory);
                     if ($paymentResult) {
                         $response['done'] = true;
@@ -516,7 +516,7 @@ if (isset($_POST['more_payment'])) {
             $updateBooking = "UPDATE booking SET remaining_price = remaining_price - $remaining_amount where booking_id = '$booking_id'";
             $result = mysqli_query($connection, $updateBooking);
             if ($result) {
-                $paymentHistory = "INSERT INTO payment_history(booking_id,payment_type_id,amount,added_by) VALUES ('$booking_id', '$payment_type', '$remaining_amount', '$added_by')";
+                $paymentHistory = "INSERT INTO payment_history(booking_id,payment_type,amount,added_by) VALUES ('$booking_id', '$payment_type', '$remaining_amount', '$added_by')";
                 $paymentResult = mysqli_query($connection, $paymentHistory);
                 if ($paymentResult) {
                     $response['done'] = true;
@@ -622,7 +622,7 @@ if(isset($_POST['saveInvoice'])) {
     $total_price = $_POST['total_price'];
     $inv = $_POST['invoice_no'];
 
-    $query = "UPDATE invoice set paid = '$paid', room_id = '$room', payment_type_id = '$payment_type', total_price = $total_price WHERE id = '$inv'";
+    $query = "UPDATE invoice set paid = '$paid', room_id = '$room', payment_type = '$payment_type', total_price = $total_price WHERE id = '$inv'";
     $result = mysqli_query($connection, $query);
     if(isset($room) && $room != '' && $room != ' '){
         $booking_query = "UPDATE booking set remaining_price = remaining_price + '$total_price' WHERE room_id = '$room'";

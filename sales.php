@@ -67,6 +67,7 @@
                             <th>Customer Name</th>
                             <th>Total Price</th>
                             <th>Paid</th>
+                            <th>Payment Type</th>
                             <th>Room Charged</th>
                             <th>Created Date</th>
                             <th>Action</th>
@@ -87,6 +88,7 @@
                                     <td><?php echo $invoice['customer_id'] ? $invoice['customer_id'] : $invoice['description'] ?></td>
                                     <td><?php echo number_format($invoice['total_price']) ?></td>
                                     <td><?php echo number_format($invoice['paid']) ?></td>
+                                    <td><?php echo $invoice['payment_type'] ?></td>
                                     <td><?php echo $invoice['room_id'] ? get_room_name($invoice['room_id']) : "" ?></td>
                                     <td><?php echo date('M j, Y',strtotime($invoice['created_at'])) ?></td>
                                     <td>
