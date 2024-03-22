@@ -19,8 +19,17 @@ if (isset($_GET['room_mang'])){
 elseif (isset($_GET['dashboard'])){
     include_once "dashboard.php";
 }
+elseif (isset($_GET['reservation_mang'])){
+    include_once "reservation_mang.php";
+}
+elseif (isset($_GET['edit_reservation'])){
+    include_once "edit_reservation.php";
+}
 elseif (isset($_GET['reservation'])){
     include_once "reservation.php";
+}
+elseif (isset($_GET['halls'])){
+    include_once "halls.php";
 }
 elseif (isset($_GET['staff_mang'])){
     include_once "staff_mang.php";
@@ -51,6 +60,15 @@ elseif (isset($_GET['editInvoice'])){
 }
 elseif (isset($_GET['inventory'])){
     include_once "inventory.php";
+}
+elseif (isset($_GET['laundry'])){
+    include_once "wash.php";
+}
+elseif (isset($_GET['laundry_services'])){
+    include_once "wash_service.php";
+}
+elseif (isset($_GET['service'])){
+    include_once "laundry_service.php";
 }
 elseif (isset($_GET['room_type'])){
     include_once "room_type.php";

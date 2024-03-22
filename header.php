@@ -1,6 +1,7 @@
 <?php
-$company_name="Hotel Management Company";
-$company_phone="08034150437, 08080843274, 08034500783";
+$company_name="Lamonde By Somwhere Hotel Jos";
+$company_address="16 Apollo Crescent, Jos Plateau State. Nigeria 930271";
+$company_phone="+234706765393";
 ?>
 <!DOCTYPE html>
 <html>
@@ -26,7 +27,7 @@ $company_phone="08034150437, 08080843274, 08034500783";
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span></button>
-            <a class="navbar-brand" href="index.php?dashboard"><span>Hotel </span>Management System</a>
+            <a class="navbar-brand" href="index.php?dashboard"><span>Lamonde </span>By Somwhere Hotel</a>
             <ul class="nav navbar-top-links navbar-right">
                 <li class="dropdown"><a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
                         <em class="fa fa-user"></em>

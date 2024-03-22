@@ -1,3 +1,67 @@
+$("#addHall").submit(function () {
+  var hall = $("#hall").val();
+  var price = $("#price").val();
+
+  $.ajax({
+    type: "post",
+    url: "ajax.php",
+    dataType: "JSON",
+    data: {
+      hall: hall,
+      price: price,
+      add_hall: "",
+    },
+    success: function (response) {
+      if (response.done == true) {
+        $("#addHall").modal("hide");
+        window.location.href = "index.php?halls";
+      } else {
+        $(".response").html(
+          '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>' +
+            response.data +
+            "</div>"
+        );
+      }
+    },
+  });
+
+  return false;
+});
+
+$("#roomTypeEditFrom").submit(function () {
+  var room_type = $("#edit_room_type").val();
+  var price = $("#edit_price").val();
+  var room_type_id = $("#edit_room_type_id").val();
+
+  //   console.log(room_type + " " + price + " " + room_type_id);
+
+  $.ajax({
+    type: "post",
+    url: "ajax.php",
+    dataType: "JSON",
+    data: {
+      room_type_id: room_type_id,
+      price: price,
+      room_type: room_type,
+      edit_room_type: "",
+    },
+    success: function (response) {
+      if (response.done == true) {
+        $("#editRoomType").modal("hide");
+        window.location.href = "index.php?room_type";
+      } else {
+        $(".edit_response").html(
+          '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>' +
+            response.data +
+            "</div>"
+        );
+      }
+    },
+  });
+
+  return false;
+});
+
 $("#addRoomType").submit(function () {
   var room_type = $("#room_type").val();
   var price = $("#price").val();
@@ -160,6 +224,72 @@ $("#itemEditFrom").submit(function () {
   });
 
   return false;
+});
+
+$("#laundryEditFrom").submit(function () {
+  var apparel = $("#edit_apparel").val();
+  var wash = $("#edit_wash").val();
+  var iron = $("#edit_iron").val();
+  var laundry_id = $("#edit_id").val();
+
+  $.ajax({
+    type: "post",
+    url: "ajax.php",
+    dataType: "JSON",
+    data: {
+      laundry_id: laundry_id,
+      apparel: apparel,
+      wash: wash,
+      iron: iron,
+      edit_laundry: "",
+    },
+    success: function (response) {
+      if (response.done == true) {
+        $("#editLaundry").modal("hide");
+        window.location.href = "index.php?laundry";
+      } else {
+        $(".response").html(
+          '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>' +
+            response.data +
+            "</div>"
+        );
+      }
+    },
+  });
+
+  return false;
+});
+
+$(document).on("click", "#laundryEdit", function (e) {
+  e.preventDefault();
+
+  var laundry_id = $(this).data("id");
+
+  console.log(laundry_id);
+
+  $.ajax({
+    type: "post",
+    url: "ajax.php",
+    dataType: "JSON",
+    data: {
+      laundry_id: laundry_id,
+      laundry_edit: "",
+    },
+    success: function (response) {
+      if (response.done == true) {
+        $("#edit_apparel").val(response.apparel);
+        $("#edit_wash").val(response.wash);
+        $("#edit_iron").val(response.iron);
+        $("#edit_id").val(response.id);
+      } else {
+        $(".edit_response").html(
+          '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>' +
+            response.data +
+            "</div>"
+        );
+      }
+    },
+  });
 });
 
 $(document).on("click", "#itemEdit", function (e) {

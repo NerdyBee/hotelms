@@ -121,6 +121,33 @@ if (isset($_POST['room_type_edit'])) {
     echo json_encode($response);
 }
 
+if (isset($_POST['edit_laundry'])) {
+    $apparel = $_POST['apparel'];
+    $wash = $_POST['wash'];
+    $iron = $_POST['iron'];
+    $laundry_id = $_POST['laundry_id'];
+
+    if ($apparel != '' && isset($wash) && $wash != '') {
+        $query = "UPDATE laundry SET apparel = '$apparel',wash_iron = '$wash',iron = '$iron' where id = '$laundry_id'";
+        $result = mysqli_query($connection, $query);
+
+        if ($result) {
+            $response['done'] = true;
+            $response['data'] = 'Successfully Edit Laundry';
+        } else {
+            $response['done'] = false;
+            $response['data'] = "DataBase Error";
+        }
+
+    } else {
+
+        $response['done'] = false;
+        $response['data'] = "Please Enter Apparel Type and Price";
+    }
+
+    echo json_encode($response);
+}
+
 if (isset($_POST['edit_item'])) {
     $item = $_POST['item'];
     $category = $_POST['category'];
@@ -291,7 +318,7 @@ if (isset($_POST['booking'])) {
     // if($discount <= ((40 / 100) * $total_price)){
         if ($customer_result) {
             $customer_id = mysqli_insert_id($connection);
-            $booking_sql = "INSERT INTO booking (customer_id,room_id,check_in,check_out,total_price,remaining_price,added_by) VALUES ('$customer_id','$room_id','$check_in','$check_out','$total_price','$total_price','$added_by')";
+            $booking_sql = "INSERT INTO booking (customer_id,room_id,check_in,check_out,total_price,remaining_price,discount,added_by) VALUES ('$customer_id','$room_id','$check_in','$check_out','$total_price','$total_price','$discount','$added_by')";
             $booking_result = mysqli_query($connection, $booking_sql);
             if ($booking_result) {
                 $room_stats_sql = "UPDATE room SET status = '1' WHERE room_id = '$room_id'";
@@ -615,6 +642,22 @@ if (isset($_POST['createInvoice'])) {
 
 }
 
+if (isset($_POST['createLaundryInvoice'])) {
+    $description = $_POST['customer'];
+    $added_by = $_SESSION['user_id'];
+
+    $query = "INSERT INTO laundry_invoice (description,added_by) VALUES ('$description','$added_by')";
+    $result = mysqli_query($connection, $query);
+    $inv_id = mysqli_insert_id($connection);
+    if ($result) {
+        $_SESSION['laundry_invoice'] = $inv_id;
+        header("Location:index.php?service");
+    } else {
+        header("Location:index.php?laundry_services&error");
+    }
+
+}
+
 if(isset($_POST['saveInvoice'])) {
     $room = $_POST['room'];
     $paid = $_POST['paid'];
@@ -634,6 +677,54 @@ if(isset($_POST['saveInvoice'])) {
     } else {
         header("Location:index.php?sales&error&" . mysqli_error($connection));
     }
+}
+
+if(isset($_POST['saveLaundryInvoice'])) {
+    $room = $_POST['room'];
+    $paid = $_POST['paid'];
+    $payment_type = $_POST['payment_type'];
+    $total_price = $_POST['total_price'];
+    $inv = $_POST['invoice_no'];
+
+    $query = "UPDATE laundry_invoice set paid = '$paid', room_id = '$room', payment_type = '$payment_type', total_price = $total_price WHERE id = '$inv'";
+    $result = mysqli_query($connection, $query);
+    if(isset($room) && $room != '' && $room != ' '){
+        $booking_query = "UPDATE booking set remaining_price = remaining_price + '$total_price' WHERE room_id = '$room'";
+        $booking_result = mysqli_query($connection, $booking_query);
+    }
+
+    if ($result) {
+        header("Location:index.php?laundry_services");
+    } else {
+        header("Location:index.php?service&error&" . mysqli_error($connection));
+    }
+}
+
+if (isset($_POST['createService'])) {
+    $apparel = $_POST['apparel'];
+    $serv_type = $_POST['serv_type'];
+    $inv = $_SESSION['laundry_invoice'];
+    $quantity = $_POST['quantity'];
+    $added_by = $_SESSION['user_id'];
+
+    $query1 = "select * from laundry where id = $apparel";
+    $result1 = mysqli_query($connection, $query1);
+    $item_details = mysqli_fetch_assoc($result1);
+    $price = $item_details[$serv_type];
+    // $iron = $item_details['iron'];
+    if ($result1){
+        $sub_total = $price * $quantity;
+        $query = "INSERT INTO laundry_jobs (invoice_id,laundry_id,price,quantity,sub_total,added_by) VALUES ('$inv','$apparel','$price','$quantity','$sub_total','$added_by')";
+        $result = mysqli_query($connection, $query);
+        if ($result) {
+            header("Location:index.php?service");
+        } else {
+            header("Location:index.php?service&error");
+        }
+    } else {
+        header("Location:index.php?service&errorService");
+    }
+
 }
 
 if (isset($_POST['createSales'])) {
@@ -746,6 +837,20 @@ if (isset($_POST['change_shift'])) {
 
 /***** Bizzy *****/
 
+if (isset($_POST['createLaundry'])) {
+    $apparel = $_POST['apparel'];
+    $wash = $_POST['wash'];
+    $iron = $_POST['iron'];
+
+    $query = "INSERT INTO laundry (apparel,wash_iron,iron) VALUES ('$apparel','$wash', '$iron')";
+    $result = mysqli_query($connection, $query);    if ($result) {
+        header("Location:index.php?laundry&success");
+    } else {
+        header("Location:index.php?laundry&error");
+    }
+
+}
+
 if (isset($_POST['createItem'])) {
     $item_name = $_POST['item_name'];
     $price = $_POST['price'];
@@ -760,12 +865,28 @@ if (isset($_POST['createItem'])) {
 
 }
 
+if (isset($_POST['laundry_edit'])) {
+    $laundry_id = $_POST['laundry_id'];
+
+    $sql = "SELECT * FROM laundry WHERE id = '$laundry_id'";
+    $result = mysqli_query($connection, $sql);
+    if ($result) {
+        $laundry = mysqli_fetch_assoc($result);
+        $response['done'] = true;
+        $response['apparel'] = $laundry['apparel'];
+        $response['wash'] = $laundry['wash_iron'];
+        $response['iron'] = $laundry['iron'];
+        $response['id'] = $laundry['id'];
+    } else {
+        $response['done'] = false;
+        $response['data'] = "DataBase Error right here!";
+    }
+
+    echo json_encode($response);
+}
 
 if (isset($_POST['item_edit'])) {
     $item_id = $_POST['item_id'];
-    // $item = $_POST['item'];
-    // $price = $_POST['price'];
-    // $quantity = $_POST['quantity'];
 
     $sql = "SELECT * FROM inventory WHERE item_id = '$item_id'";
     $result = mysqli_query($connection, $sql);
@@ -783,7 +904,6 @@ if (isset($_POST['item_edit'])) {
 
     echo json_encode($response);
 }
-
 
 if (isset($_POST['addSupply'])) {
     $item = $_POST['item'];

@@ -48,6 +48,22 @@
             <?php }
         }
 
+        if(in_array($_SESSION['user_privilege'], $sup)) {
+            if (isset($_GET['halls'])){ ?>
+                <li class="active">
+                    <a href="index.php?halls"><em class="fa fa-building-o">&nbsp;</em>
+                        Halls
+                    </a>
+                </li>
+            <?php } else{?>
+                <li>
+                <a href="index.php?halls"><em class="fa fa-building-o">&nbsp;</em>
+                        Halls
+                    </a>
+                </li>
+            <?php }
+        }
+
         if(in_array($_SESSION['user_privilege'], $md)) {
             if (isset($_GET['reservation'])){ ?>
                 <li class="active">
@@ -59,6 +75,20 @@
                 <li>
                 <a href="index.php?reservation"><em class="fa fa-calendar">&nbsp;</em>
                         Reservation
+                    </a>
+                </li>
+            <?php }
+        
+            if (isset($_GET['reservation_mang'])){ ?>
+                <li class="active">
+                    <a href="index.php?reservation_mang"><em class="fa fa-calendar">&nbsp;</em>
+                        Manage Reservations
+                    </a>
+                </li>
+            <?php } else{?>
+                <li>
+                <a href="index.php?reservation_mang"><em class="fa fa-calendar">&nbsp;</em>
+                        Manage Reservations
                     </a>
                 </li>
             <?php }
@@ -88,6 +118,36 @@
                 <li>
                 <a href="index.php?bar"><em class="fa fa-cutlery">&nbsp;</em>
                         Bar/Kitchen
+                    </a>
+                </li>
+            <?php }
+        }
+        if(in_array($_SESSION['user_privilege'], $bar)) {
+            if (isset($_GET['laundry'])){ ?>
+                <li class="active">
+                    <a href="index.php?laundry"><em class="fa fa-money">&nbsp;</em>
+                        Laundry Prices
+                    </a>
+                </li>
+            <?php } else{?>
+                <li>
+                <a href="index.php?laundry"><em class="fa fa-money">&nbsp;</em>
+                        Laundry Prices
+                    </a>
+                </li>
+            <?php }
+        }
+        if(in_array($_SESSION['user_privilege'], $bar)) {
+            if (isset($_GET['laundry_services'])){ ?>
+                <li class="active">
+                    <a href="index.php?laundry_services"><em class="fa fa-wrench">&nbsp;</em>
+                        Laundry Services
+                    </a>
+                </li>
+            <?php } else{?>
+                <li>
+                <a href="index.php?laundry_services"><em class="fa fa-wrench">&nbsp;</em>
+                        Laundry Services
                     </a>
                 </li>
             <?php }
@@ -162,29 +222,15 @@
                 </a>
             </li>
             <?php }
-        
-            if (isset($_GET['statistics'])){ ?>
-                <li class="active">
-                    <a href="index.php?statistics"><em class="fa fa-pie-chart">&nbsp;</em>
-                        Statistics
-                    </a>
-                </li>
-            <?php } else{?>
-            <li>
-                <a href="index.php?statistics"><em class="fa fa-pie-chart">&nbsp;</em>
-                    Statistics
-                </a>
-            </li>
-            <?php }
             if (isset($_GET['users'])){ ?>
                 <li class="active">
-                    <a href="index.php?users"><em class="fa fa-pie-chart">&nbsp;</em>
+                    <a href="index.php?users"><em class="fa fa-user">&nbsp;</em>
                         Users
                     </a>
                 </li>
             <?php } else{?>
             <li>
-                <a href="index.php?users"><em class="fa fa-pie-chart">&nbsp;</em>
+                <a href="index.php?users"><em class="fa fa-user">&nbsp;</em>
                     Users
                 </a>
             </li>
