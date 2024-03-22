@@ -167,6 +167,21 @@
             <?php }
         }
         if(in_array($_SESSION['user_privilege'], $bar)) {
+            if (isset($_GET['gym'])){ ?>
+                <li class="active">
+                    <a href="index.php?gym"><em class="fa fa-bicycle">&nbsp;</em>
+                        Gym/Pool
+                    </a>
+                </li>
+            <?php } else{?>
+                <li>
+                <a href="index.php?gym"><em class="fa fa-bicycle">&nbsp;</em>
+                        Gym/Pool
+                    </a>
+                </li>
+            <?php }
+        }
+        if(in_array($_SESSION['user_privilege'], $bar)) {
             if (isset($_GET['laundry'])){ ?>
                 <li class="active">
                     <a href="index.php?laundry"><em class="fa fa-money">&nbsp;</em>

@@ -55,6 +55,9 @@ elseif (isset($_GET['statistics'])){
 elseif (isset($_GET['emp_history'])){
     include_once "emp_history.php";
 }
+elseif (isset($_GET['gym'])){
+    include_once "gym.php";
+}
 elseif (isset($_GET['bar'])){
     include_once "sales.php";
 }

@@ -427,7 +427,7 @@ if (isset($_POST['hall_booking'])) {
             $booking_sql = "INSERT INTO hall_booking (customer_id,hall_id,check_in,check_out,total_price,remaining_price,discount,added_by) VALUES ('$customer_id','$hall_id','$check_in','$check_out','$total_price','$total_price','$discount','$added_by')";
             $booking_result = mysqli_query($connection, $booking_sql);
             if ($booking_result) {
-                $hall_stats_sql = "UPDATE halls SET status = '1' WHERE id = '$hall_id'";
+                $hall_stats_sql = "UPDATE halls SET status = '1' WHERE hall_id = '$hall_id'";
                 if (mysqli_query($connection, $hall_stats_sql)) {
                     $response['done'] = true;
                     $response['data'] = 'Successfully Book Hall';
@@ -778,6 +778,22 @@ if (isset($_POST['add_user'])) {
     echo json_encode($response);
 }
 
+if (isset($_POST['createGym'])) {
+    $description = $_POST['description'];
+    $amount = $_POST['amount'];
+    $added_by = $_SESSION['user_id'];
+
+    $query = "INSERT INTO gym_pool (description,amount,added_by) VALUES ('$description','$amount','$added_by')";
+    $result = mysqli_query($connection, $query);
+    $inv_id = mysqli_insert_id($connection);
+    if ($result) {
+        header("Location:index.php?gym");
+    } else {
+        header("Location:index.php?gym&error");
+    }
+
+}
+
 if (isset($_POST['createInvoice'])) {
     $description = $_POST['customer'];
     $added_by = $_SESSION['user_id'];
@@ -1015,6 +1031,51 @@ if (isset($_POST['createItem'])) {
         header("Location:index.php?inventory&error");
     }
 
+}
+
+if (isset($_POST['gym_edit'])) {
+    $gym_id = $_POST['gym_id'];
+
+    $sql = "SELECT * FROM gym_pool WHERE id = '$gym_id'";
+    $result = mysqli_query($connection, $sql);
+    if ($result) {
+        $gym = mysqli_fetch_assoc($result);
+        $response['done'] = true;
+        $response['description'] = $gym['description'];
+        $response['amount'] = $gym['amount'];
+        $response['id'] = $gym['id'];
+    } else {
+        $response['done'] = false;
+        $response['data'] = "DataBase Error right here!";
+    }
+
+    echo json_encode($response);
+}
+
+if (isset($_POST['edit_gym'])) {
+    $description = $_POST['description'];
+    $amount = $_POST['amount'];
+    $gym_id = $_POST['gym_id'];
+
+    if ($description != '' && isset($amount) && $amount != '') {
+        $query = "UPDATE gym_pool SET description = '$description',amount = '$amount' where id = '$gym_id'";
+        $result = mysqli_query($connection, $query);
+
+        if ($result) {
+            $response['done'] = true;
+            $response['data'] = 'Successfully Edit Gym/Pool';
+        } else {
+            $response['done'] = false;
+            $response['data'] = "DataBase Error";
+        }
+
+    } else {
+
+        $response['done'] = false;
+        $response['data'] = "Please Enter Description and Amount";
+    }
+
+    echo json_encode($response);
 }
 
 if (isset($_POST['laundry_edit'])) {

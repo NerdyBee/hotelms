@@ -260,6 +260,69 @@ $("#laundryEditFrom").submit(function () {
   return false;
 });
 
+$("#gymEditFrom").submit(function () {
+  var description = $("#edit_description").val();
+  var amount = $("#edit_amount").val();
+  var gym_id = $("#edit_id").val();
+
+  $.ajax({
+    type: "post",
+    url: "ajax.php",
+    dataType: "JSON",
+    data: {
+      gym_id: gym_id,
+      description: description,
+      amount: amount,
+      edit_gym: "",
+    },
+    success: function (response) {
+      if (response.done == true) {
+        $("#editGym").modal("hide");
+        window.location.href = "index.php?gym";
+      } else {
+        $(".response").html(
+          '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>' +
+            response.data +
+            "</div>"
+        );
+      }
+    },
+  });
+
+  return false;
+});
+
+$(document).on("click", "#gymEdit", function (e) {
+  e.preventDefault();
+
+  var gym_id = $(this).data("id");
+
+  console.log(gym_id);
+
+  $.ajax({
+    type: "post",
+    url: "ajax.php",
+    dataType: "JSON",
+    data: {
+      gym_id: gym_id,
+      gym_edit: "",
+    },
+    success: function (response) {
+      if (response.done == true) {
+        $("#edit_description").val(response.description);
+        $("#edit_amount").val(response.amount);
+        $("#edit_id").val(response.id);
+      } else {
+        $(".edit_response").html(
+          '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>' +
+            response.data +
+            "</div>"
+        );
+      }
+    },
+  });
+});
+
 $(document).on("click", "#laundryEdit", function (e) {
   e.preventDefault();
 
