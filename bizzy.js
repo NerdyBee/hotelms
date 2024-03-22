@@ -28,27 +28,27 @@ $("#addHall").submit(function () {
   return false;
 });
 
-$("#roomTypeEditFrom").submit(function () {
-  var room_type = $("#edit_room_type").val();
+$("#hallEditFrom").submit(function () {
+  var hall = $("#edit_hall").val();
   var price = $("#edit_price").val();
-  var room_type_id = $("#edit_room_type_id").val();
+  var hall_id = $("#edit_hall_id").val();
 
-  //   console.log(room_type + " " + price + " " + room_type_id);
+  //   console.log(hall + " " + price + " " + hall_id);
 
   $.ajax({
     type: "post",
     url: "ajax.php",
     dataType: "JSON",
     data: {
-      room_type_id: room_type_id,
+      hall_id: hall_id,
       price: price,
-      room_type: room_type,
-      edit_room_type: "",
+      hall: hall,
+      edit_hall: "",
     },
     success: function (response) {
       if (response.done == true) {
-        $("#editRoomType").modal("hide");
-        window.location.href = "index.php?room_type";
+        $("#editHall").modal("hide");
+        window.location.href = "index.php?halls";
       } else {
         $(".edit_response").html(
           '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>' +
@@ -325,6 +325,37 @@ $(document).on("click", "#itemEdit", function (e) {
   });
 });
 
+$(document).on("click", "#hallEdit", function (e) {
+  e.preventDefault();
+
+  var hall_id = $(this).data("id");
+
+  console.log(hall_id);
+
+  $.ajax({
+    type: "post",
+    url: "ajax.php",
+    dataType: "JSON",
+    data: {
+      hall_id: hall_id,
+      hall_edit: "",
+    },
+    success: function (response) {
+      if (response.done == true) {
+        $("#edit_hall").val(response.hall);
+        $("#edit_price").val(response.price);
+        $("#edit_hall_id").val(hall_id);
+      } else {
+        $(".edit_response").html(
+          '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>' +
+            response.data +
+            "</div>"
+        );
+      }
+    },
+  });
+});
+
 $(document).on("click", "#roomTypeEdit", function (e) {
   e.preventDefault();
 
@@ -356,8 +387,94 @@ $(document).on("click", "#roomTypeEdit", function (e) {
   });
 });
 
+function fetch_hall_price(val) {
+  // console.log(val);
+  $.ajax({
+    type: "post",
+    url: "ajax.php",
+    data: {
+      hall_id: val,
+      hall_price: "",
+    },
+    success: function (response) {
+      $("#price").html(response);
+      var days = document.getElementById("staying_day").innerHTML;
+      $("#total_price").html(response * days);
+    },
+  });
+}
+
+$("#hallBooking").submit(function () {
+  var hall_id = $("#hall").val();
+  var hall = $("#hall :selected").text();
+  var check_in_date = $("#check_in_date").val();
+  var check_out_date = $("#check_out_date").val();
+  var discount = $("#discount").val();
+  var first_name = $("#first_name").val();
+  var last_name = $("#last_name").val();
+  var contact_no = $("#contact_no").val();
+  var email = $("#email").val();
+  var id_card_id = $("#id_card_id").val();
+  var id_card_no = $("#id_card_no").val();
+  var address = $("#address").val();
+  var total_p = document.getElementById("total_price").innerHTML;
+  var total_price = total_p - discount;
+
+  if (!hall && !first_name && !contact_no && !address) {
+    $(".response").html(
+      '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>Please Fill Cardinality</div>'
+    );
+  } else if (discount > (40 / 100) * total_p) {
+    $(".response").html(
+      '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>Dsicount Cannot be more than 40%</div>'
+    );
+  } else {
+    console.log(total_price);
+    $.ajax({
+      type: "post",
+      url: "ajax.php",
+      dataType: "JSON",
+      data: {
+        hall_id: hall_id,
+        check_in: check_in_date,
+        check_out: check_out_date,
+        discount: discount,
+        total_price: total_price,
+        name: first_name + " " + last_name,
+        contact_no: contact_no,
+        email: email,
+        id_card_id: id_card_id,
+        id_card_no: id_card_no,
+        address: address,
+        hall_booking: "",
+      },
+      success: function (response) {
+        if (response.done == true) {
+          $("#getCustomerName").html(first_name + " " + last_name);
+          $("#getHall").html(hall);
+          $("#getCheckIn").html(check_in_date);
+          $("#getCheckOut").html(check_out_date);
+          $("#getDiscount").html(new Intl.NumberFormat().format(discount));
+          $("#getTotalPrice").html(new Intl.NumberFormat().format(total_price));
+          $("#getPaymentStaus").html("Unpaid");
+          $("#bookingConfirm").modal("show");
+          document.getElementById("booking").reset();
+        } else {
+          $(".response").html(
+            '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>' +
+              response.data +
+              "</div>"
+          );
+        }
+      },
+    });
+  }
+
+  return false;
+});
+
 function myFunction() {
-  console.log("first");
+  // console.log("first");
   var x = document.getElementById("discount").value;
   document.getElementById("price").innerHTML =
     document.getElementById("price").innerHTML - x;

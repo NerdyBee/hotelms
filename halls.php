@@ -46,7 +46,7 @@
                         </thead>
                         <tbody>
                         <?php
-                        $room_query = "SELECT * FROM halls";
+                        $room_query = "SELECT * FROM halls WHERE deleteStatus != 1";
                         $rooms_result = mysqli_query($connection, $room_query);
                         if (mysqli_num_rows($rooms_result) > 0) {
                             while ($rooms = mysqli_fetch_assoc($rooms_result)) { ?>
@@ -59,7 +59,7 @@
                                                 data-target="#editHall" data-id="<?php echo $rooms['id']; ?>"
                                                 id="hallEdit" class="btn btn-info"><i class="fa fa-pencil"></i></button>
 
-                                        <a href="ajax.php?delete_hll=<?php echo $rooms['id']; ?>"
+                                        <a href="ajax.php?delete_hall=<?php echo $rooms['id']; ?>"
                                            class="btn btn-danger" style="border-radius:60px;" onclick="return confirm('Are you Sure?')"><i
                                                     class="fa fa-trash" alt="delete"></i></a>
                                     </td>

@@ -31,6 +31,15 @@ elseif (isset($_GET['reservation'])){
 elseif (isset($_GET['halls'])){
     include_once "halls.php";
 }
+elseif (isset($_GET['hall_reservation'])){
+    include_once "hall_reservation.php";
+}
+elseif (isset($_GET['hall_mang'])){
+    include_once "hall_mang.php";
+}
+elseif (isset($_GET['hall_reservation_mang'])){
+    include_once "hall_reservation_mang.php";
+}
 elseif (isset($_GET['staff_mang'])){
     include_once "staff_mang.php";
 }

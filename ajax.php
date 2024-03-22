@@ -24,6 +24,87 @@ if (isset($_POST['login'])) {
     }
 }
 
+if (isset($_POST['add_hall'])) {
+    $hall = $_POST['hall'];
+    $price = $_POST['price'];
+
+    if ($hall != '') {
+        $sql = "SELECT * FROM halls WHERE hall = '$hall'";
+        if (mysqli_num_rows(mysqli_query($connection, $sql)) >= 1) {
+            $response['done'] = false;
+            $response['data'] = "Hall Already Exist";
+        } else {
+            $query = "INSERT INTO halls (hall, price, status) VALUES ('$hall', '$price', '0')";
+            $result = mysqli_query($connection, $query);
+
+            if ($result) {
+                $response['done'] = true;
+                $response['data'] = 'Successfully Added Hall';
+            } else {
+                $response['done'] = false;
+                $response['data'] = "DataBase Error";
+            }
+        }
+    } else {
+
+        $response['done'] = false;
+        $response['data'] = "Please Enter Hall";
+    }
+
+    echo json_encode($response);
+}
+
+if (isset($_POST['edit_hall'])) {
+    $hall_id = $_POST['hall_id'];
+    $price = $_POST['price'];
+    $hall = $_POST['hall'];
+
+    if ($hall_id != '') {
+        $sql = "SELECT * FROM halls WHERE hall = '$hall' AND id <> '$hall_id'";
+        if (mysqli_num_rows(mysqli_query($connection, $sql)) >= 1) {
+            $response['done'] = false;
+            $response['data'] = "Hall Already Exist";
+        } else {
+            $query = "UPDATE halls SET hall = '$hall',price = '$price' where id = '$hall_id'";
+            $result = mysqli_query($connection, $query);
+
+            if ($result) {
+                $response['done'] = true;
+                $response['data'] = 'Successfully Edit Hall';
+            } else {
+                $response['done'] = false;
+                $response['data'] = "DataBase Error";
+            }
+        }
+
+    } else {
+
+        $response['done'] = false;
+        $response['data'] = "Please Enter Hall Name";
+    }
+
+    echo json_encode($response);
+}
+
+if (isset($_POST['hall_edit'])) {
+    $hall_id = $_POST['hall_id'];
+
+    $sql = "SELECT * FROM halls WHERE id = '$hall_id'";
+    $result = mysqli_query($connection, $sql);
+    if ($result) {
+        $room = mysqli_fetch_assoc($result);
+        $response['done'] = true;
+        $response['hall'] = $room['hall'];
+        $response['price'] = $room['price'];
+        $response['hall_id'] = $room['id'];
+    } else {
+        $response['done'] = false;
+        $response['data'] = "DataBase Error";
+    }
+
+    echo json_encode($response);
+}
+
 if (isset($_POST['add_room_type'])) {
     $room_type = $_POST['room_type'];
     $price = $_POST['price'];
@@ -233,10 +314,22 @@ if (isset($_POST['edit_room'])) {
     echo json_encode($response);
 }
 
+if (isset($_GET['delete_hall'])) {
+    $hall_id = $_GET['delete_hall'];
+    $sql = "UPDATE halls set deleteStatus = '1' WHERE id = '$hall_id'";
+    // $sql = "DELETE FROM halls WHERE id = '$hall_id'";
+    $result = mysqli_query($connection, $sql);
+    if ($result) {
+        header("Location:index.php?halls&success");
+    } else {
+        header("Location:index.php?halls&error");
+    }
+}
+
 if (isset($_GET['delete_room_type'])) {
     $room_id = $_GET['delete_room_type'];
-    // $sql = "UPDATE room_type set deleteStatus = '1' WHERE room_id = '$room_id' AND status IS NULL";
-    $sql = "DELETE FROM room_type WHERE room_type_id = '$room_id'";
+    $sql = "UPDATE room_type set deleteStatus = '1' WHERE room_type_id = '$room_id'";
+    // $sql = "DELETE FROM room_type WHERE room_type_id = '$room_id'";
     $result = mysqli_query($connection, $sql);
     if ($result) {
         header("Location:index.php?room_type&success");
@@ -297,6 +390,65 @@ if (isset($_POST['room_price'])) {
     } else {
         echo "0";
     }
+}
+
+if (isset($_POST['hall_price'])) {
+    $hall_id = $_POST['hall_id'];
+
+    $sql = "SELECT * FROM halls WHERE id = '$hall_id'";
+    $result = mysqli_query($connection, $sql);
+    if ($result) {
+        $hall = mysqli_fetch_assoc($result);
+        echo $hall['price'];
+    } else {
+        echo "0";
+    }
+}
+
+if (isset($_POST['hall_booking'])) {
+    $hall_id = $_POST['hall_id'];
+    $check_in = $_POST['check_in'];
+    $check_out = $_POST['check_out'];
+    $discount = $_POST['discount'];
+    $total_price = $_POST['total_price'];
+    $name = $_POST['name'];
+    $contact_no = $_POST['contact_no'];
+    $email = $_POST['email'];
+    $id_card_id = $_POST['id_card_id'];
+    $id_card_no = $_POST['id_card_no'];
+    $address = $_POST['address'];
+    $added_by = $_SESSION['user_id'];
+
+    $customer_sql = "INSERT INTO customer (customer_name,contact_no,email,id_card_type_id,id_card_no,address) VALUES ('$name','$contact_no','$email','$id_card_id','$id_card_no','$address')";
+    $customer_result = mysqli_query($connection, $customer_sql);
+    // if($discount <= ((40 / 100) * $total_price)){
+        if ($customer_result) {
+            $customer_id = mysqli_insert_id($connection);
+            $booking_sql = "INSERT INTO hall_booking (customer_id,hall_id,check_in,check_out,total_price,remaining_price,discount,added_by) VALUES ('$customer_id','$hall_id','$check_in','$check_out','$total_price','$total_price','$discount','$added_by')";
+            $booking_result = mysqli_query($connection, $booking_sql);
+            if ($booking_result) {
+                $hall_stats_sql = "UPDATE halls SET status = '1' WHERE id = '$hall_id'";
+                if (mysqli_query($connection, $hall_stats_sql)) {
+                    $response['done'] = true;
+                    $response['data'] = 'Successfully Book Hall';
+                } else {
+                    $response['done'] = false;
+                    $response['data'] = "DataBase Error in status change";
+                }
+            } else {
+                $response['done'] = false;
+                $response['data'] = "DataBase Error booking hall";
+            }
+        } else {
+            $response['done'] = false;
+            $response['data'] = "DataBase Error adding customer";
+        }
+    // } else {
+    //     $response['done'] = false;
+    //     $response['data'] = "DataBase Error add discount";
+    // }
+
+    echo json_encode($response);
 }
 
 if (isset($_POST['booking'])) {
