@@ -60,12 +60,12 @@ if (isset($_POST['edit_hall'])) {
     $hall = $_POST['hall'];
 
     if ($hall_id != '') {
-        $sql = "SELECT * FROM halls WHERE hall = '$hall' AND id <> '$hall_id'";
+        $sql = "SELECT * FROM halls WHERE hall = '$hall' AND hall_id <> '$hall_id'";
         if (mysqli_num_rows(mysqli_query($connection, $sql)) >= 1) {
             $response['done'] = false;
             $response['data'] = "Hall Already Exist";
         } else {
-            $query = "UPDATE halls SET hall = '$hall',price = '$price' where id = '$hall_id'";
+            $query = "UPDATE halls SET hall = '$hall',price = '$price' where hall_id = '$hall_id'";
             $result = mysqli_query($connection, $query);
 
             if ($result) {
@@ -89,14 +89,14 @@ if (isset($_POST['edit_hall'])) {
 if (isset($_POST['hall_edit'])) {
     $hall_id = $_POST['hall_id'];
 
-    $sql = "SELECT * FROM halls WHERE id = '$hall_id'";
+    $sql = "SELECT * FROM halls WHERE hall_id = '$hall_id'";
     $result = mysqli_query($connection, $sql);
     if ($result) {
         $room = mysqli_fetch_assoc($result);
         $response['done'] = true;
         $response['hall'] = $room['hall'];
         $response['price'] = $room['price'];
-        $response['hall_id'] = $room['id'];
+        $response['hall_id'] = $room['hall_id'];
     } else {
         $response['done'] = false;
         $response['data'] = "DataBase Error";
@@ -316,7 +316,7 @@ if (isset($_POST['edit_room'])) {
 
 if (isset($_GET['delete_hall'])) {
     $hall_id = $_GET['delete_hall'];
-    $sql = "UPDATE halls set deleteStatus = '1' WHERE id = '$hall_id'";
+    $sql = "UPDATE halls set deleteStatus = '1' WHERE hall_id = '$hall_id'";
     // $sql = "DELETE FROM halls WHERE id = '$hall_id'";
     $result = mysqli_query($connection, $sql);
     if ($result) {
@@ -395,7 +395,7 @@ if (isset($_POST['room_price'])) {
 if (isset($_POST['hall_price'])) {
     $hall_id = $_POST['hall_id'];
 
-    $sql = "SELECT * FROM halls WHERE id = '$hall_id'";
+    $sql = "SELECT * FROM halls WHERE hall_id = '$hall_id'";
     $result = mysqli_query($connection, $sql);
     if ($result) {
         $hall = mysqli_fetch_assoc($result);

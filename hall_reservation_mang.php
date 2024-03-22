@@ -47,7 +47,6 @@
                         </thead>
                         <tbody>
                         <?php
-                        //$staff_query = "SELECT * FROM staff  JOIN staff_type JOIN shift ON staff.staff_type_id =staff_type.staff_type_id ON shift.";
                         $staff_query = "SELECT * FROM hall_booking NATURAL JOIN customer NATURAL JOIN halls";
                         $staff_result = mysqli_query($connection, $staff_query);
 

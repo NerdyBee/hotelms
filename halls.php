@@ -56,10 +56,10 @@
                                     <td>
 
                                         <button title="Edit Hall Information" style="border-radius:60px;" data-toggle="modal"
-                                                data-target="#editHall" data-id="<?php echo $rooms['id']; ?>"
+                                                data-target="#editHall" data-id="<?php echo $rooms['hall_id']; ?>"
                                                 id="hallEdit" class="btn btn-info"><i class="fa fa-pencil"></i></button>
 
-                                        <a href="ajax.php?delete_hall=<?php echo $rooms['id']; ?>"
+                                        <a href="ajax.php?delete_hall=<?php echo $rooms['hall_id']; ?>"
                                            class="btn btn-danger" style="border-radius:60px;" onclick="return confirm('Are you Sure?')"><i
                                                     class="fa fa-trash" alt="delete"></i></a>
                                     </td>
