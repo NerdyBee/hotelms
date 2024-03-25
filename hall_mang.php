@@ -46,7 +46,19 @@
                         </thead>
                         <tbody>
                         <?php
-                        $room_query = "SELECT * FROM halls WHERE deleteStatus = 0";
+                        // $room_query = "SELECT * FROM halls WHERE deleteStatus = 0";
+
+                        $room_query = "SELECT halls.*, 
+                            CASE 
+                                WHEN hall_booking.hall_id IS NOT NULL THEN 'Booked'
+                                ELSE 'Available'
+                            END AS availability
+                        FROM halls 
+                        LEFT JOIN hall_booking ON halls.hall_id = hall_booking.hall_id 
+                            AND STR_TO_DATE(hall_booking.check_in, '%d-%m-%Y') <= CURDATE()
+                            AND STR_TO_DATE(hall_booking.check_out, '%d-%m-%Y') > CURDATE()
+                        WHERE halls.deleteStatus = 0";
+
                         $rooms_result = mysqli_query($connection, $room_query);
                         if (mysqli_num_rows($rooms_result) > 0) {
                             while ($rooms = mysqli_fetch_assoc($rooms_result)) { ?>
@@ -54,8 +66,8 @@
                                     <td><?php echo $rooms['hall'] ?></td>
                                     <td>
                                         <?php
-                                        if ($rooms['status'] == 0) {
-                                            echo '<a href="index.php?reservation&id=' . $rooms['id'] . '" class="btn btn-success" style="border-radius:0%">Book Hall</a>';
+                                        if ($rooms['availability'] == 'Available') {
+                                            echo '<a href="index.php?reservation&id=' . $rooms['hall_id'] . '" class="btn btn-success" style="border-radius:0%">Book Hall</a>';
                                         } else {
                                             echo '<a href="#" class="btn btn-danger" style="border-radius:0%">Booked</a>';
                                         }
@@ -65,16 +77,16 @@
                                     
                                     <td>
 
-                                        <button title="Edit Room Information" style="border-radius:60px;" data-toggle="modal"
-                                                data-target="#editRoom" data-id="<?php echo $rooms['id']; ?>"
-                                                id="roomEdit" class="btn btn-info"><i class="fa fa-pencil"></i></button>
+                                        <!-- <button title="Edit Room Information" style="border-radius:60px;" data-toggle="modal"
+                                                data-target="#editRoom" data-id="<-?php echo $rooms['hall_id']; ?>"
+                                                id="roomEdit" class="btn btn-info"><i class="fa fa-pencil"></i></button> -->
                                         <?php
                                         if ($rooms['status'] == 1) {
-                                            echo '<button title="Customer Information" data-toggle="modal" data-target="#cutomerDetailsModal" data-id="' . $rooms['id'] . '" id="cutomerDetails" class="btn btn-warning" style="border-radius:60px;"><i class="fa fa-eye"></i></button>';
+                                            echo '<button title="Customer Information" data-toggle="modal" data-target="#cutomerDetailsModal" data-id="' . $rooms['hall_id'] . '" id="cutomerDetails" class="btn btn-warning" style="border-radius:60px;"><i class="fa fa-eye"></i></button>';
                                         }
                                         ?>
 
-                                        <a href="ajax.php?delete_room=<?php echo $rooms['id']; ?>"
+                                        <a href="ajax.php?delete_room=<?php echo $rooms['hall_id']; ?>"
                                            class="btn btn-danger" style="border-radius:60px;" onclick="return confirm('Are you Sure?')"><i
                                                     class="fa fa-trash" alt="delete"></i></a>
                                     </td>

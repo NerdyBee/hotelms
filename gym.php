@@ -31,7 +31,13 @@
                         <div class="row">
                             <div class="form-group col-lg-6">
                                 <label>Description</label>
-                                <input type="text" class="form-control" placeholder="Description" name="description" required>
+                                <!--input type="text" class="form-control" placeholder="Description" name="description" required-->
+                                <select class="form-control" id="description" name="description" required data-error="Select">
+                                        <option selected disabled>Select</option>
+                                        <option value="gym">Gym</option>
+                                        <option value="pool">Pool</option>
+                                        <option value="other">Others</option>
+                                    </select>
                                 <div class="help-block with-errors"></div>
                             </div>
                             
@@ -132,8 +138,14 @@
 
                                 <div class="form-group">
                                     <label>Description</label>
-                                    <input class="form-control" placeholder="Description" id="edit_description" required
-                                           data-error="Enter Description">
+                                    <!--input class="form-control" placeholder="Description" id="edit_description" required
+                                           data-error="Enter Description"-->
+                                    <select class="form-control" id="edit_description" required data-error="Select option">
+                                        <option selected disabled>Select</option>
+                                        <option value="gym">Gym</option>
+                                        <option value="pool">Pool</option>
+                                        <option value="other">Others</option>
+                                    </select>
                                     <div class="help-block with-errors"></div>
                                 </div>
                                 <div class="form-group">

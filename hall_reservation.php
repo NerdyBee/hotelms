@@ -166,12 +166,8 @@
                                 <td id="getCustomerName"></td>
                             </tr>
                             <tr>
-                                <td><b>Room Type</b></td>
-                                <td id="getRoomType"></td>
-                            </tr>
-                            <tr>
-                                <td><b>Room No</b></td>
-                                <td id="getRoomNo"></td>
+                                <td><b>Hall</b></td>
+                                <td id="getHall"></td>
                             </tr>
                             <tr>
                                 <td><b>Check In</b></td>
@@ -200,7 +196,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <a class="btn btn-primary" style="border-radius:60px;" href="index.php?room_mang"><i class="fa fa-check-circle"></i></a>
+                <a class="btn btn-primary" style="border-radius:60px;" href="index.php?hall_mang"><i class="fa fa-check-circle"></i></a>
             </div>
         </div>
 

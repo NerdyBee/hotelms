@@ -352,7 +352,7 @@ if (isset($_GET['delete_room'])) {
 if (isset($_POST['room_type'])) {
     $room_type_id = $_POST['room_type_id'];
 
-    $sql = "SELECT * FROM room WHERE room_type_id = '$room_type_id' AND check_in_status = '0' AND deleteStatus = '0'";
+    $sql = "SELECT * FROM room WHERE room_type_id = '$room_type_id' AND deleteStatus = '0'";
     $result = mysqli_query($connection, $sql);
     if ($result) {
         echo "<option selected disabled>Select Room Type</option>";
@@ -360,7 +360,7 @@ if (isset($_POST['room_type'])) {
             echo "<option value='" . $room['room_id'] . "'>" . $room['room_no'] . "</option>";
         }
     } else {
-        echo "<option>No Available</option>";
+        echo "<option>Not Available</option>";
     }
 }
 
@@ -375,7 +375,7 @@ if (isset($_POST['room_type_checked'])) {
             echo "<option value='" . $room['room_id'] . "'>" . $room['room_no'] . "</option>";
         }
     } else {
-        echo "<option>No Available</option>";
+        echo "<option>Not Available</option>";
     }
 }
 
@@ -419,8 +419,11 @@ if (isset($_POST['hall_booking'])) {
     $address = $_POST['address'];
     $added_by = $_SESSION['user_id'];
 
-    $customer_sql = "INSERT INTO customer (customer_name,contact_no,email,id_card_type_id,id_card_no,address) VALUES ('$name','$contact_no','$email','$id_card_id','$id_card_no','$address')";
-    $customer_result = mysqli_query($connection, $customer_sql);
+    $check_availability = "SELECT * FROM hall_booking WHERE hall_id = '$hall_id' AND '$check_in' BETWEEN check_in AND check_out";
+    $check = mysqli_query($connection, $check_availability);
+    if (mysqli_num_rows($check) < 1){
+        $customer_sql = "INSERT INTO customer (customer_name,contact_no,email,id_card_type_id,id_card_no,address) VALUES ('$name','$contact_no','$email','$id_card_id','$id_card_no','$address')";
+        $customer_result = mysqli_query($connection, $customer_sql);
     // if($discount <= ((40 / 100) * $total_price)){
         if ($customer_result) {
             $customer_id = mysqli_insert_id($connection);
@@ -443,10 +446,10 @@ if (isset($_POST['hall_booking'])) {
             $response['done'] = false;
             $response['data'] = "DataBase Error adding customer";
         }
-    // } else {
-    //     $response['done'] = false;
-    //     $response['data'] = "DataBase Error add discount";
-    // }
+    } else {
+        $response['done'] = false;
+        $response['data'] = "Hall is not available for the requested date range";
+    }
 
     echo json_encode($response);
 }
@@ -465,8 +468,11 @@ if (isset($_POST['booking'])) {
     $address = $_POST['address'];
     $added_by = $_SESSION['user_id'];
 
-    $customer_sql = "INSERT INTO customer (customer_name,contact_no,email,id_card_type_id,id_card_no,address) VALUES ('$name','$contact_no','$email','$id_card_id','$id_card_no','$address')";
-    $customer_result = mysqli_query($connection, $customer_sql);
+    $check_availability = "SELECT * FROM booking WHERE room_id = '$room_id' AND '$check_in' BETWEEN check_in AND check_out";
+    $check = mysqli_query($connection, $check_availability);
+    if (mysqli_num_rows($check) < 1){
+        $customer_sql = "INSERT INTO customer (customer_name,contact_no,email,id_card_type_id,id_card_no,address) VALUES ('$name','$contact_no','$email','$id_card_id','$id_card_no','$address')";
+        $customer_result = mysqli_query($connection, $customer_sql);
     // if($discount <= ((40 / 100) * $total_price)){
         if ($customer_result) {
             $customer_id = mysqli_insert_id($connection);
@@ -489,10 +495,10 @@ if (isset($_POST['booking'])) {
             $response['done'] = false;
             $response['data'] = "DataBase Error add customer";
         }
-    // } else {
-    //     $response['done'] = false;
-    //     $response['data'] = "DataBase Error add discount";
-    // }
+    } else {
+        $response['done'] = false;
+        $response['data'] = "Room is not available for the requested date range";
+    }
 
     echo json_encode($response);
 }

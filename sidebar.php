@@ -32,21 +32,6 @@
                 </a>
             </li>
         <?php }
-        if(in_array($_SESSION['user_privilege'], $sup)) {
-            if (isset($_GET['room_type'])){ ?>
-                <li class="active">
-                    <a href="index.php?room_type"><em class="fa fa-bed">&nbsp;</em>
-                        Room Types
-                    </a>
-                </li>
-            <?php } else{?>
-                <li>
-                <a href="index.php?room_type"><em class="fa fa-bed">&nbsp;</em>
-                        Room Types
-                    </a>
-                </li>
-            <?php }
-        }
 
         if(in_array($_SESSION['user_privilege'], $sup)) {
             if (isset($_GET['halls'])){ ?>
@@ -103,6 +88,22 @@
                 <li>
                 <a href="index.php?hall_reservation_mang"><em class="fa fa-building-o">&nbsp;</em>
                         Manage Halls Reservations
+                    </a>
+                </li>
+            <?php }
+        }
+
+        if(in_array($_SESSION['user_privilege'], $sup)) {
+            if (isset($_GET['room_type'])){ ?>
+                <li class="active">
+                    <a href="index.php?room_type"><em class="fa fa-bed">&nbsp;</em>
+                        Room Types
+                    </a>
+                </li>
+            <?php } else{?>
+                <li>
+                <a href="index.php?room_type"><em class="fa fa-bed">&nbsp;</em>
+                        Room Types
                     </a>
                 </li>
             <?php }
