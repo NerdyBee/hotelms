@@ -478,10 +478,12 @@ if (isset($_POST['booking'])) {
             $customer_id = mysqli_insert_id($connection);
             $booking_sql = "INSERT INTO booking (customer_id,room_id,check_in,check_out,total_price,remaining_price,discount,added_by) VALUES ('$customer_id','$room_id','$check_in','$check_out','$total_price','$total_price','$discount','$added_by')";
             $booking_result = mysqli_query($connection, $booking_sql);
+            $book_id = mysqli_insert_id($connection);
             if ($booking_result) {
                 $room_stats_sql = "UPDATE room SET status = '1' WHERE room_id = '$room_id'";
                 if (mysqli_query($connection, $room_stats_sql)) {
                     $response['done'] = true;
+                    $response['book_id'] = $book_id;
                     $response['data'] = 'Successfully Booking';
                 } else {
                     $response['done'] = false;
@@ -1130,10 +1132,109 @@ if (isset($_POST['addSupply'])) {
     $added_by = $_SESSION['user_id'];
 
     $query = "INSERT INTO supply (item_id,quantity,added_by) VALUES ('$item','$quantity','$added_by')";
-    $result = mysqli_query($connection, $query);    if ($result) {
+    $result = mysqli_query($connection, $query);
+    if ($result) {
         header("Location:index.php?supply&success");
     } else {
         header("Location:index.php?supply&error");
     }
 
 }
+
+if (isset($_POST['moreBook'])) {
+    // Process received data
+    $customerId = $_POST['customerId'];
+    $check_in = $_POST['checkin'];
+    $check_out = $_POST['checkout'];
+    $discount = $_POST['discount'];
+    $added_by = $_SESSION['user_id'];
+
+    // Initialize response array
+    $response = array();
+
+    // Check if any rooms are selected
+    if (isset($_POST['rooms'])) {
+        $selectedRooms = $_POST['rooms'];
+
+        // Loop through each selected room
+        foreach ($selectedRooms as $room_id) {
+            // You may want to perform additional validations here
+            // For example, check if the room is available for the requested dates
+
+            // Insert a record into the booking table for the current room
+            $query = "INSERT INTO booking (customer_id, room_id, check_in, check_out, total_price, remaining_price, discount, added_by) VALUES ('$customerId', '$room_id', '$check_in', '$check_out', '0', '0', '$discount', '$added_by')";
+            $result = mysqli_query($connection, $query);
+
+            // Check if the query was successful
+            if ($result) {
+                // Insertion successful
+                $response[] = array('room_id' => $room_id, 'status' => 'success');
+            } else {
+                // Insertion failed
+                $response[] = array('room_id' => $room_id, 'status' => 'error');
+            }
+        }
+
+        // Check if all insertions were successful
+        $success = !in_array('error', array_column($response, 'status'));
+        $response['done'] = $success;
+        $response['data'] = 'Successfully Booking';
+
+        // Send a response back to JavaScript
+        echo json_encode($response);
+    } else {
+        // No rooms selected
+        $response['done'] = false;
+        $response['data'] = 'No rooms selected.';
+        echo json_encode($response);
+    }
+}
+
+// if (isset($_POST['moreBook'])) {
+//     // Process received data
+//     $selectedRooms = $_POST['rooms'];
+//     $customerId = $_POST['customerId'];
+//     $check_in = $_POST['checkin'];
+//     $check_out = $_POST['checkout'];
+//     $discount = $_POST['discount'];
+//     $total_price = $_POST['total_price'];
+//     $added_by = $_SESSION['user_id'];
+
+//     // You can perform further processing here, such as database operations
+//     $query = "INSERT INTO booking (customer_id,room_id,check_in,check_out,total_price,remaining_price,discount,added_by) VALUES ('$customerId','$room_id','$check_in','$check_out','$total_price','$total_price','$discount','$added_by')";
+//     $result = mysqli_query($connection, $query);
+
+//     // Send a response back to JavaScript
+//     if ($discount) {
+//         $response['done'] = true;
+//         $response['discount'] = $discount;
+//         $response['room'] = $selectedRooms;
+//         $response['data'] = 'Successfully Booking';
+//     } else {
+//         $response['done'] = false;
+//         $response['data'] = "Room is not available for the requested date range";
+//     }
+
+//     echo json_encode($response);
+// }
+
+//     echo json_encode(array('success' => true, 'message' => 'Data received successfully.'));
+// } else {
+//     // No 'rooms' data received
+//     echo json_encode(array('success' => false, 'message' => 'No data received.'));
+// }
+
+// // Check if the form is submitted
+// if (isset($_POST['moreRooms'])) {
+//     // Check if the 'room_no' field is set in the $_POST array
+//     if (isset($_POST['room_no'])) {
+//         // Loop through each selected room ID
+//         foreach ($_POST['room_no'] as $selected_room_id) {
+//             // Process each selected room ID as needed
+//             echo "Selected room ID: " . $selected_room_id . "<br>";
+//         }
+//     } else {
+//         // No checkboxes were selected
+//         echo "No room selected.";
+//     }
+// }

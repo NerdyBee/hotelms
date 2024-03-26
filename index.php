@@ -28,6 +28,9 @@ elseif (isset($_GET['edit_reservation'])){
 elseif (isset($_GET['reservation'])){
     include_once "reservation.php";
 }
+elseif (isset($_GET['more_rooms'])){
+    include_once "more_rooms.php";
+}
 elseif (isset($_GET['halls'])){
     include_once "halls.php";
 }

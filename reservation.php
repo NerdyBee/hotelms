@@ -10,7 +10,6 @@ if (isset($_GET['room_id'])){
     $get_room_no = $get_room['room_no'];
     $get_room_price = $get_room['price'];
 }
-
 ?>
 <div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
     <div class="row">
@@ -238,6 +237,10 @@ if (isset($_GET['room_id'])){
                             </tr>
                             </thead> -->
                             <tbody>
+                            <!-- <tr>
+                                <td><b>Booking ID</b></td>
+                                <td id="getBookID"></td>
+                            </tr> -->
                             <tr>
                                 <td><b>Customer Name</b></td>
                                 <td id="getCustomerName"></td>
@@ -274,6 +277,8 @@ if (isset($_GET['room_id'])){
                             </tbody>
                         </table>
                     </div>
+                    <input type="hidden" id="getBookID" value="">
+                    <a id="moreLink" class="btn btn-warning" style="border-radius:60px;" href="index.php?more_rooms">Add More Room(s)</a>
                 </div>
             </div>
             <div class="modal-footer">

@@ -183,6 +183,62 @@ function fetch_price(val) {
     },
   });
 }
+function handleCheckbox(checkbox) {
+  if (checkbox.checked) {
+    fetch_more_price(checkbox.value);
+  } else {
+    remove_more_price(checkbox.value);
+  }
+}
+
+function fetch_more_price(val) {
+  $.ajax({
+    type: "post",
+    url: "ajax.php",
+    data: {
+      room_id: val,
+      room_price: "",
+    },
+    success: function (response) {
+      // $("#price").html(response);
+      var currentPrice = parseInt($("#price").html()); // Get the current price
+      var newPrice = parseInt(response) + currentPrice; // Calculate the new price
+      $("#price").html(newPrice); // Update the price element with the new total price
+      var days = document.getElementById("staying_day").innerHTML;
+      var currentTotal = parseInt($("#total_price").html());
+      var newTotal = parseInt(response * days) + currentTotal;
+      $("#total_price").html(newTotal);
+    },
+    error: function (xhr, status, error) {
+      console.error(xhr.responseText); // Log any errors to the console
+    },
+  });
+}
+
+function remove_more_price(val) {
+  $.ajax({
+    type: "post",
+    url: "ajax.php",
+    data: {
+      room_id: val,
+      room_price: "",
+      remove: true, // indicate that this is a remove operation
+    },
+    success: function (response) {
+      var currentPrice = parseInt($("#price").html()); // Get the current price
+      var newPrice = currentPrice - parseInt(response); // Calculate the new price
+      $("#price").html(newPrice); // Update the price element with the new total price
+
+      var days = parseInt(document.getElementById("staying_day").innerHTML);
+      var currentTotal = parseInt($("#total_price").html());
+      var newTotal = currentTotal - parseInt(response) * days; // Subtract from the total price
+      $("#total_price").html(newTotal); // Update the total price element with the new total
+    },
+    error: function (xhr, status, error) {
+      console.error(xhr.responseText); // Log any errors to the console
+    },
+  });
+}
 
 $("#booking").submit(function () {
   var room_type_id = $("#room_type").val();
@@ -233,6 +289,7 @@ $("#booking").submit(function () {
       },
       success: function (response) {
         if (response.done == true) {
+          $("#getBookID").val(response.book_id);
           $("#getCustomerName").html(first_name + " " + last_name);
           $("#getRoomType").html(room_type);
           $("#getRoomNo").html(room_no);
@@ -243,6 +300,11 @@ $("#booking").submit(function () {
           $("#getPaymentStaus").html("Unpaid");
           $("#bookingConfirm").modal("show");
           document.getElementById("booking").reset();
+
+          // Construct the complete URL with parameters
+          var url = "index.php?more_rooms&id=" + response.book_id;
+          // Set href attribute for the 'More' link
+          $("#moreLink").attr("href", url);
         } else {
           $(".response").html(
             '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>' +
@@ -682,4 +744,99 @@ $(document).on("click", "#change_shift", function (e) {
   var emp_id = $(this).data("id");
   console.log(emp_id);
   $("#getEmpId").val(emp_id);
+});
+
+// $("#moreBooking").submit(function () {
+//   var customerId = $("#customerId").val();
+//   var checkin = $("#checkin").val();
+//   var checkout = $("#checkout").val();
+//   var discount = $("#discount").val();
+//   var total_p = document.getElementById("total_price").innerHTML;
+//   var total_price = total_p - discount;
+//   // Gather selected checkbox values
+//   var selectedRooms = $('input[name="room_no"]:checked')
+//     .map(function () {
+//       return this.value;
+//     })
+//     .get();
+
+//   // Send selected rooms to PHP using AJAX
+//   $.ajax({
+//     type: "POST",
+//     url: "ajax.php",
+//     dataType: "JSON",
+//     data: {
+//       moreBook: "",
+//       customerId: customerId,
+//       checkin: checkin,
+//       checkout: checkout,
+//       discount: discount,
+//       total_price: total_price,
+//       rooms: selectedRooms,
+//     },
+//     success: function (response) {
+//       if (response.done == true) {
+//         // Handle the response from PHP
+//         console.log("Response from PHP:", response);
+//         // You can perform any further actions here based on the response
+//         window.location.href = "index.php?room_mang";
+//       } else {
+//         $(".user-response").html(
+//           '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>' +
+//             response.data +
+//             "</div>"
+//         );
+//       }
+//     },
+//   });
+// });
+
+$("#moreBooking").submit(function (event) {
+  event.preventDefault(); // Prevent the form from submitting normally
+
+  var customerId = $("#customerId").val();
+  var checkin = $("#checkin").html();
+  var checkout = $("#checkout").html();
+  var discount = $("#discount").val();
+  var total_p = $("#total_price").text(); // Use jQuery to get the text content
+  var total_price = parseFloat(total_p) - parseFloat(discount); // Convert to float and calculate total price
+
+  // Gather selected checkbox values
+  var selectedRooms = $('input[name="room_no"]:checked')
+    .map(function () {
+      return this.value;
+    })
+    .get();
+
+  console.log(selectedRooms); // Debug statement to check selected rooms
+
+  // Send selected rooms to PHP using AJAX
+  $.ajax({
+    type: "POST",
+    url: "ajax.php",
+    dataType: "JSON",
+    data: {
+      moreBook: "",
+      customerId: customerId,
+      checkin: checkin,
+      checkout: checkout,
+      discount: discount,
+      total_price: total_price,
+      rooms: selectedRooms,
+    },
+    success: function (response) {
+      if (response.done == true) {
+        // Handle the response from PHP
+        console.log("Response from PHP:", response);
+        // You can perform any further actions here based on the response
+        window.location.href = "index.php?room_mang";
+      } else {
+        $(".user-response").html(
+          '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>' +
+            response.data +
+            "</div>"
+        );
+      }
+    },
+  });
 });
