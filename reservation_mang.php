@@ -19,12 +19,12 @@
                     <?php
                     if (isset($_GET['error'])) {
                         echo "<div class='alert alert-danger'>
-                                <span class='glyphicon glyphicon-info-sign'></span> &nbsp; Error on Shift Change !
+                                <span class='glyphicon glyphicon-info-sign'></span> &nbsp; Error on Booking Change !
                             </div>";
                     }
                     if (isset($_GET['success'])) {
                         echo "<div class='alert alert-success'>
-                                <span class='glyphicon glyphicon-info-sign'></span> &nbsp; Shift Successfully Changed!
+                                <span class='glyphicon glyphicon-info-sign'></span> &nbsp; Booking Successfully Changed!
                             </div>";
                     }
                     ?>

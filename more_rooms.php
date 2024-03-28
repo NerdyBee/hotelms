@@ -1,7 +1,12 @@
 <?php
 if (isset($_GET['id'])){
     $get_book_id = $_GET['id'];
-    $get_book_sql = "SELECT * FROM booking  NATURAL JOIN customer NATURAL JOIN room WHERE booking_id = '$get_book_id'";
+    // $get_book_sql = "SELECT * FROM booking  NATURAL JOIN customer NATURAL JOIN room WHERE booking_id = '$get_book_id'";
+    $get_book_sql = "SELECT * 
+        FROM booking 
+        JOIN customer ON booking.customer_id = customer.customer_id 
+        JOIN room ON booking.room_id = room.room_id 
+        WHERE booking.booking_id = '$get_book_id'";
     $get_book_result = mysqli_query($connection,$get_book_sql);
     $get_book = mysqli_fetch_assoc($get_book_result);
 

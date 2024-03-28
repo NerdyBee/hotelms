@@ -78,7 +78,9 @@
                         LEFT JOIN booking ON room.room_id = booking.room_id 
                         AND STR_TO_DATE(booking.check_in, '%d-%m-%Y') <= CURDATE()
                         AND STR_TO_DATE(booking.check_out, '%d-%m-%Y') > CURDATE()
-                        WHERE room.deleteStatus = 0";
+                        AND booking.checkout_status = 0
+                        WHERE room.deleteStatus = 0
+                        ORDER BY room_type.room_type";
 
                         $rooms_result = mysqli_query($connection, $room_query);
                         if (mysqli_num_rows($rooms_result) > 0) {
@@ -264,6 +266,7 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-lg-12">
+                            <div class="cust_response"></div>
                             <table class="table table-responsive table-bordered">
                                 <!-- <thead>
                                 <tr>
@@ -323,6 +326,7 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-lg-12">
+                            <div class="payment-response"></div>
                             <table class="table table-responsive table-bordered">
                                 
                                 <tbody>
@@ -353,7 +357,7 @@
                                 </tbody>
                             </table>
                             <form role="form" id="advancePayment">
-                                <div class="payment-response"></div>
+                                <!-- <div class="payment-response"></div> -->
                                 <div class="form-group col-lg-12">
                                     <label>Advance Payment</label>
                                     <input type="number" class="form-control" id="advance_payment"
@@ -399,6 +403,7 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-lg-12">
+                            <div class="payment-response"></div>
                             <table class="table table-responsive table-bordered">
                                 
                                 <tbody>
@@ -432,7 +437,7 @@
                                 </tr>
                                 </tbody>
                             </table>
-                            <form role="form" id="checkOutRoom_n" data-toggle="validator">
+                            <form role="form" id="checkOutRoom_n">
                                 <div class="checkout-response"></div>
                                 <div class="form-group col-lg-12">
                                     <label><b>Outstanding</b></label>
@@ -451,7 +456,7 @@
                                         $result = mysqli_query($connection, $query);
                                         if (mysqli_num_rows($result) > 0) {
                                             while ($payment_type = mysqli_fetch_assoc($result)) {
-                                                echo '<option value="' . $payment_type['payment_type'] . '">' . $payment_type['payment_type'] . '</option>';
+                                                echo '<option value="'.$payment_type['payment_type'].'">' . $payment_type['payment_type'] . '</option>';
                                             }
                                         }
                                         ?>
@@ -481,6 +486,7 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-lg-12">
+                            <div class="payment-response"></div>
                             <table class="table table-responsive table-bordered">
                                 
                                 <tbody>

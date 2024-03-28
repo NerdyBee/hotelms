@@ -468,15 +468,15 @@ if (isset($_POST['booking'])) {
     $address = $_POST['address'];
     $added_by = $_SESSION['user_id'];
 
-    $check_availability = "SELECT * FROM booking WHERE room_id = '$room_id' AND '$check_in' BETWEEN check_in AND check_out";
+    $check_availability = "SELECT * FROM booking WHERE room_id = '$room_id' AND '$check_in' BETWEEN check_in AND check_out AND checkout_status = 0";
     $check = mysqli_query($connection, $check_availability);
     if (mysqli_num_rows($check) < 1){
-        $customer_sql = "INSERT INTO customer (customer_name,contact_no,email,id_card_type_id,id_card_no,address) VALUES ('$name','$contact_no','$email','$id_card_id','$id_card_no','$address')";
+        $customer_sql = "INSERT INTO customer (customer_name,contact_no,email,id_card_type_id,id_card_no,address,total_price,remaining_price,discount,added_by) VALUES ('$name','$contact_no','$email','$id_card_id','$id_card_no','$address','$total_price','$total_price','$discount','$added_by')";
         $customer_result = mysqli_query($connection, $customer_sql);
     // if($discount <= ((40 / 100) * $total_price)){
         if ($customer_result) {
             $customer_id = mysqli_insert_id($connection);
-            $booking_sql = "INSERT INTO booking (customer_id,room_id,check_in,check_out,total_price,remaining_price,discount,added_by) VALUES ('$customer_id','$room_id','$check_in','$check_out','$total_price','$total_price','$discount','$added_by')";
+            $booking_sql = "INSERT INTO booking (customer_id,room_id,check_in,check_out,total_p,remaining_p,discounted,added_by) VALUES ('$customer_id','$room_id','$check_in','$check_out','$total_price','$total_price','$discount','$added_by')";
             $booking_result = mysqli_query($connection, $booking_sql);
             $book_id = mysqli_insert_id($connection);
             if ($booking_result) {
@@ -503,6 +503,17 @@ if (isset($_POST['booking'])) {
     }
 
     echo json_encode($response);
+}
+
+if (isset($_GET['delete_booking'])) {
+    $book_id = $_GET['delete_booking'];
+    $sql = "DELETE FROM booking WHERE booking_id = $book_id";
+    $result = mysqli_query($connection, $sql);
+    if ($result) {
+        header("Location:index.php?reservation_mang&delete_success");
+    } else {
+        header("Location:index.php?reservation_mang&error");
+    }
 }
 
 if (isset($_POST['invoiceDetails'])) {
@@ -546,7 +557,14 @@ if (isset($_POST['cutomerDetails'])) {
     $room_id = $_POST['room_id'];
 
     if ($room_id != '') {
-        $sql = "SELECT * FROM room NATURAL JOIN room_type NATURAL JOIN booking NATURAL JOIN customer WHERE room_id = '$room_id' AND payment_status = '0'";
+        // $sql = "SELECT * FROM room NATURAL JOIN room_type NATURAL JOIN booking NATURAL JOIN customer WHERE room_id = '$room_id'";
+        $sql = "SELECT * 
+        FROM room 
+        JOIN room_type ON room.room_type_id = room_type.room_type_id 
+        JOIN booking ON room.room_id = booking.room_id 
+        JOIN customer ON booking.customer_id = customer.customer_id 
+        WHERE room.room_id = '$room_id'";
+        
         $result = mysqli_query($connection, $sql);
         if ($result) {
             $customer_details = mysqli_fetch_assoc($result);
@@ -562,7 +580,7 @@ if (isset($_POST['cutomerDetails'])) {
             $response['id_card_no'] = $customer_details['id_card_no'];
             $response['id_card_type_id'] = $id_type_name['id_card_type'];
             $response['address'] = $customer_details['address'];
-            $response['remaining_price'] = $customer_details['remaining_price'];
+            $response['remaining_price'] = $customer_details['remaining_price'] + $customer_details['extras'];
         } else {
             $response['done'] = false;
             $response['data'] = "DataBase Error";
@@ -575,7 +593,13 @@ if (isset($_POST['cutomerDetails'])) {
 if (isset($_POST['booked_room'])) {
     $room_id = $_POST['room_id'];
 
-    $sql = "SELECT * FROM room NATURAL JOIN room_type NATURAL JOIN booking NATURAL JOIN customer WHERE room_id = '$room_id' AND payment_status = '0'";
+    // $sql = "SELECT * FROM room NATURAL JOIN room_type NATURAL JOIN booking NATURAL JOIN customer WHERE room_id = '$room_id'";
+    $sql = "SELECT * FROM room 
+        JOIN room_type ON room.room_type_id = room_type.room_type_id 
+        JOIN booking ON room.room_id = booking.room_id 
+        JOIN customer ON booking.customer_id = customer.customer_id 
+        WHERE room.room_id = '$room_id'";
+
     $result = mysqli_query($connection, $sql);
     if ($result) {
         $room = mysqli_fetch_assoc($result);
@@ -586,8 +610,8 @@ if (isset($_POST['booked_room'])) {
         $response['room_type'] = $room['room_type'];
         $response['check_in'] = date('M j, Y', strtotime($room['check_in']));
         $response['check_out'] = date('M j, Y', strtotime($room['check_out']));
-        $response['total_price'] = $room['total_price'];
-        $response['remaining_price'] = $room['remaining_price'];
+        $response['total_price'] = $room['total_price'] + $room['extras'];
+        $response['remaining_price'] = $room['remaining_price'] + $room['extras'];
     } else {
         $response['done'] = false;
         $response['data'] = "DataBase Error";
@@ -603,15 +627,26 @@ if (isset($_POST['check_in_room'])) {
     $added_by = $_SESSION['user_id'];
 
     if ($booking_id != '') {
-        $query = "select * from booking where booking_id = '$booking_id'";
+        $query = "SELECT * FROM booking WHERE booking_id = '$booking_id'";
         $result = mysqli_query($connection, $query);
         $booking_details = mysqli_fetch_assoc($result);
-        $room_id = $booking_details['room_id'];
-        $remaining_price = $booking_details['total_price'] - $advance_payment;
 
-        $updateBooking = "UPDATE booking SET remaining_price = '$remaining_price' where booking_id = '$booking_id'";
+        $customer_id = $booking_details['customer_id'];
+        $room_id = $booking_details['room_id'];
+        $remaining_p = $booking_details['total_p'] - $advance_payment;
+
+        $queryCus = "SELECT * FROM customer WHERE customer_id = '$customer_id'";
+        $resultCus = mysqli_query($connection, $queryCus);
+        $cus_details = mysqli_fetch_assoc($resultCus);
+        $remaining_price = $cus_details['total_price'] - $advance_payment;
+
+        $updateCustomer = "UPDATE customer SET remaining_price =  $remaining_price WHERE customer_id = '$customer_id'";
+        $resultCustomer = mysqli_query($connection, $updateCustomer);
+        $updateBooking = "UPDATE booking SET remaining_p = '$remaining_price' WHERE booking_id = '$booking_id'";
         $result = mysqli_query($connection, $updateBooking);
-        if ($result) {
+        if ($resultCustomer) {
+            $updatebook = "UPDATE booking SET checkin_status = '1' WHERE booking_id = '$booking_id'";
+            $updateRes = mysqli_query($connection, $updatebook);
             $updateRoom = "UPDATE room SET check_in_status = '1' WHERE room_id = '$room_id'";
             $updateResult = mysqli_query($connection, $updateRoom);
             if ($updateResult) {
@@ -619,6 +654,7 @@ if (isset($_POST['check_in_room'])) {
                 $paymentResult = mysqli_query($connection, $paymentHistory);
                 if ($paymentResult) {
                     $response['done'] = true;
+                    $response['data'] = "Check in successful";
                 } else {
                     $response['done'] = false;
                     $response['data'] = "Problem in adding payment history";
@@ -645,14 +681,23 @@ if (isset($_POST['check_out_room'])) {
     $added_by = $_SESSION['user_id'];
 
     if ($booking_id != '') {
-        $query = "select * from booking where booking_id = '$booking_id'";
+        $query = "SELECT * FROM booking WHERE booking_id = '$booking_id'";
         $result = mysqli_query($connection, $query);
         $booking_details = mysqli_fetch_assoc($result);
         $room_id = $booking_details['room_id'];
-        $remaining_price = $booking_details['remaining_price'];
+        $customer_id = $booking_details['customer_id'];
+        $remaining_p = $booking_details['remaining_p'];
+        $extras = $booking_details['extras'];
+        $queryCus = "SELECT * FROM customer WHERE customer_id = '$customer_id'";
+        $resultCus = mysqli_query($connection, $queryCus);
+        $cus_details = mysqli_fetch_assoc($resultCus);
+        $remaining_price = $cus_details['total_price'] + $extras;
 
-        if ($remaining_price == $remaining_amount) {
-            $updateBooking = "UPDATE booking SET remaining_price = '0',payment_status = '1' where booking_id = '$booking_id'";
+        // if ($remaining_price == $remaining_amount) {
+        if ($remaining_price) {
+            $updateCustomer = "UPDATE customer SET remaining_price = '0',payment_status = '1' WHERE customer_id = '$customer_id'";
+            $resultCustomer = mysqli_query($connection, $updateCustomer);
+            $updateBooking = "UPDATE booking SET remaining_p = '0',payment_stat = '1',checkin_status = '0',checkout_status = '1' WHERE booking_id = '$booking_id'";
             $result = mysqli_query($connection, $updateBooking);
             if ($result) {
                 $updateRoom = "UPDATE room SET status = NULL,check_in_status = '0',check_out_status = '1' WHERE room_id = '$room_id'";
@@ -662,6 +707,7 @@ if (isset($_POST['check_out_room'])) {
                     $paymentResult = mysqli_query($connection, $paymentHistory);
                     if ($paymentResult) {
                         $response['done'] = true;
+                        $response['data'] = "Check out successful";
                     } else {
                         $response['done'] = false;
                         $response['data'] = "Problem in adding payment history";
@@ -693,20 +739,31 @@ if (isset($_POST['more_payment'])) {
     $added_by = $_SESSION['user_id'];
 
     if ($booking_id != '') {
-        $query = "select * from booking where booking_id = '$booking_id'";
+        $query = "SELECT * FROM booking WHERE booking_id = '$booking_id'";
         $result = mysqli_query($connection, $query);
         $booking_details = mysqli_fetch_assoc($result);
+        $customer_id = $booking_details['customer_id'];
         $room_id = $booking_details['room_id'];
-        $remaining_price = $booking_details['remaining_price'];
+        $remaining_p = $booking_details['remaining_p'];
+        $extras = $booking_details['extras'];
+
+        $queryCus = "SELECT * FROM customer WHERE customer_id = '$customer_id'";
+        $resultCus = mysqli_query($connection, $queryCus);
+        $cus_details = mysqli_fetch_assoc($resultCus);
+        $cus_details = mysqli_fetch_assoc($resultCus);
+        $remaining_price = $cus_details['total_price'] + $extras;
 
         if ($remaining_amount != 0 && isset($payment_type)) {
-            $updateBooking = "UPDATE booking SET remaining_price = remaining_price - $remaining_amount where booking_id = '$booking_id'";
+            $updateCustomer = "UPDATE customer SET remaining_price =  remaining_price - $remaining_amount WHERE customer_id = '$customer_id'";
+            $resultCustomer = mysqli_query($connection, $updateCustomer);
+            $updateBooking = "UPDATE booking SET remaining_p = remaining_p - $remaining_amount WHERE booking_id = '$booking_id'";
             $result = mysqli_query($connection, $updateBooking);
             if ($result) {
                 $paymentHistory = "INSERT INTO payment_history(booking_id,payment_type,amount,added_by) VALUES ('$booking_id', '$payment_type', '$remaining_amount', '$added_by')";
                 $paymentResult = mysqli_query($connection, $paymentHistory);
                 if ($paymentResult) {
                     $response['done'] = true;
+                    $response['data'] = "Payment successful";
                 } else {
                     $response['done'] = false;
                     $response['data'] = "Problem in adding payment history";
@@ -844,7 +901,7 @@ if(isset($_POST['saveInvoice'])) {
     $query = "UPDATE invoice set paid = '$paid', room_id = '$room', payment_type = '$payment_type', total_price = $total_price WHERE id = '$inv'";
     $result = mysqli_query($connection, $query);
     if(isset($room) && $room != '' && $room != ' '){
-        $booking_query = "UPDATE booking set remaining_price = remaining_price + '$total_price' WHERE room_id = '$room'";
+        $booking_query = "UPDATE booking set extras = extras + '$total_price' WHERE room_id = '$room'";
         $booking_result = mysqli_query($connection, $booking_query);
     }
 
@@ -865,7 +922,7 @@ if(isset($_POST['saveLaundryInvoice'])) {
     $query = "UPDATE laundry_invoice set paid = '$paid', room_id = '$room', payment_type = '$payment_type', total_price = $total_price WHERE id = '$inv'";
     $result = mysqli_query($connection, $query);
     if(isset($room) && $room != '' && $room != ' '){
-        $booking_query = "UPDATE booking set remaining_price = remaining_price + '$total_price' WHERE room_id = '$room'";
+        $booking_query = "UPDATE booking set extras = extras + '$total_price' WHERE room_id = '$room'";
         $booking_result = mysqli_query($connection, $booking_query);
     }
 
@@ -1146,6 +1203,7 @@ if (isset($_POST['moreBook'])) {
     $customerId = $_POST['customerId'];
     $check_in = $_POST['checkin'];
     $check_out = $_POST['checkout'];
+    $total_price = $_POST['total_price']; // Total price sent from JavaScript
     $discount = $_POST['discount'];
     $added_by = $_SESSION['user_id'];
 
@@ -1156,23 +1214,48 @@ if (isset($_POST['moreBook'])) {
     if (isset($_POST['rooms'])) {
         $selectedRooms = $_POST['rooms'];
 
+        // Check existing bookings for the customer
+        $check_existing_book_query = "SELECT room_id FROM booking WHERE customer_id = $customerId";
+        $existing_result = mysqli_query($connection, $check_existing_book_query);
+        $existing_booked_rooms = [];
+        while ($row = mysqli_fetch_assoc($existing_result)) {
+            $existing_booked_rooms[] = $row['room_id'];
+        }
+
         // Loop through each selected room
         foreach ($selectedRooms as $room_id) {
-            // You may want to perform additional validations here
-            // For example, check if the room is available for the requested dates
+            // Check if the room is already booked by the customer
+            if (!in_array($room_id, $existing_booked_rooms)) {
+                // Insert a record into the booking table for the current room
+                $query = "INSERT INTO booking (customer_id, room_id, check_in, check_out, total_p, remaining_p, discounted, added_by) VALUES
+                ('$customerId', '$room_id', '$check_in', '$check_out', '$total_price', '$total_price', '$discount', '$added_by')";
+                $result = mysqli_query($connection, $query);
 
-            // Insert a record into the booking table for the current room
-            $query = "INSERT INTO booking (customer_id, room_id, check_in, check_out, total_price, remaining_price, discount, added_by) VALUES ('$customerId', '$room_id', '$check_in', '$check_out', '0', '0', '$discount', '$added_by')";
-            $result = mysqli_query($connection, $query);
-
-            // Check if the query was successful
-            if ($result) {
-                // Insertion successful
-                $response[] = array('room_id' => $room_id, 'status' => 'success');
+                // Check if the query was successful
+                if ($result) {
+                    // Insertion successful
+                    $response[] = array('room_id' => $room_id, 'status' => 'success');
+                } else {
+                    // Insertion failed
+                    $response[] = array('room_id' => $room_id, 'status' => 'error');
+                }
             } else {
-                // Insertion failed
-                $response[] = array('room_id' => $room_id, 'status' => 'error');
+                // Room is already booked by the customer
+                $response[] = array('room_id' => $room_id, 'status' => 'booked');
             }
+        }
+
+        // Update total price for the customer
+        $update_customer_query = "UPDATE customer SET total_price = $total_price, remaining_price = $total_price, discount = $discount WHERE customer_id = $customerId";
+        $update_customer_result = mysqli_query($connection, $update_customer_query);
+
+        // Check if the update was successful
+        if ($update_customer_result) {
+            // Total price update successful
+            $response['total_price_updated'] = true;
+        } else {
+            // Total price update failed
+            $response['total_price_updated'] = false;
         }
 
         // Check if all insertions were successful
@@ -1190,51 +1273,3 @@ if (isset($_POST['moreBook'])) {
     }
 }
 
-// if (isset($_POST['moreBook'])) {
-//     // Process received data
-//     $selectedRooms = $_POST['rooms'];
-//     $customerId = $_POST['customerId'];
-//     $check_in = $_POST['checkin'];
-//     $check_out = $_POST['checkout'];
-//     $discount = $_POST['discount'];
-//     $total_price = $_POST['total_price'];
-//     $added_by = $_SESSION['user_id'];
-
-//     // You can perform further processing here, such as database operations
-//     $query = "INSERT INTO booking (customer_id,room_id,check_in,check_out,total_price,remaining_price,discount,added_by) VALUES ('$customerId','$room_id','$check_in','$check_out','$total_price','$total_price','$discount','$added_by')";
-//     $result = mysqli_query($connection, $query);
-
-//     // Send a response back to JavaScript
-//     if ($discount) {
-//         $response['done'] = true;
-//         $response['discount'] = $discount;
-//         $response['room'] = $selectedRooms;
-//         $response['data'] = 'Successfully Booking';
-//     } else {
-//         $response['done'] = false;
-//         $response['data'] = "Room is not available for the requested date range";
-//     }
-
-//     echo json_encode($response);
-// }
-
-//     echo json_encode(array('success' => true, 'message' => 'Data received successfully.'));
-// } else {
-//     // No 'rooms' data received
-//     echo json_encode(array('success' => false, 'message' => 'No data received.'));
-// }
-
-// // Check if the form is submitted
-// if (isset($_POST['moreRooms'])) {
-//     // Check if the 'room_no' field is set in the $_POST array
-//     if (isset($_POST['room_no'])) {
-//         // Loop through each selected room ID
-//         foreach ($_POST['room_no'] as $selected_room_id) {
-//             // Process each selected room ID as needed
-//             echo "Selected room ID: " . $selected_room_id . "<br>";
-//         }
-//     } else {
-//         // No checkboxes were selected
-//         echo "No room selected.";
-//     }
-// }

@@ -267,7 +267,7 @@ $("#booking").submit(function () {
       '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>Dsicount Cannot be more than 40%</div>'
     );
   } else {
-    console.log(total_price);
+    // console.log(total_price);
     $.ajax({
       type: "post",
       url: "ajax.php",
@@ -452,7 +452,7 @@ $(document).on("click", "#cutomerDetails", function (e) {
           new Intl.NumberFormat().format(response.remaining_price)
         );
       } else {
-        $(".edit_response").html(
+        $(".cust_response").html(
           '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>' +
             response.data +
             "</div>"
@@ -466,6 +466,7 @@ $(document).on("click", "#checkInRoom", function (e) {
   e.preventDefault();
 
   var room_id = $(this).data("id");
+  console.log(room_id);
 
   $.ajax({
     type: "post",
@@ -489,7 +490,11 @@ $(document).on("click", "#checkInRoom", function (e) {
         $("#getBookingID").val(response.booking_id);
         $("#checkIn").modal("show");
       } else {
-        alert(response.data);
+        $(".payment-response").html(
+          '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>' +
+            response.data +
+            "</div>"
+        );
       }
     },
   });
@@ -562,8 +567,9 @@ $("#checkOutRoom_n").submit(function () {
   var booking_id = $("#getBookingId_n").val();
   var remaining_amount = $("#remaining_amount").val();
   var payment_type = $("#payment_type").val();
+  var remainingPrice = $("#getRemainingPrice_n").val();
 
-  console.log(booking_id);
+  console.log(payment_type);
 
   $.ajax({
     type: "post",
@@ -577,7 +583,7 @@ $("#checkOutRoom_n").submit(function () {
     },
     success: function (response) {
       if (response.done == true) {
-        $("#checkIn").modal("hide");
+        $("#checkOut").modal("hide");
         window.location.href = "index.php?room_mang";
       } else {
         $(".payment-response").html(
