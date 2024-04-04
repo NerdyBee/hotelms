@@ -9,7 +9,7 @@
             <li><a href="#">
                     <em class="fa fa-home"></em>
                 </a></li>
-            <li class="active">Bar/Kitchen</li>
+            <li class="active">Bar</li>
         </ol>
     </div><!--/.row-->
 
@@ -81,7 +81,7 @@
                     <h2 class="title-anchor title-heading"><?php echo $company_name?></h2>
 					<p>Tel: <?php echo $company_phone?></p>
                     <p>Invoice No.: <?php echo sprintf("%06d", $inv)?></p>
-					<p>Kitchen/Bar Invoice</p>
+					<p>Bar Invoice</p>
                 </div>
                 <div class="panel-body">
                     <?php

@@ -142,13 +142,28 @@
             if (isset($_GET['bar'])){ ?>
                 <li class="active">
                     <a href="index.php?bar"><em class="fa fa-cutlery">&nbsp;</em>
-                        Bar/Kitchen
+                        Bar
                     </a>
                 </li>
             <?php } else{?>
                 <li>
                 <a href="index.php?bar"><em class="fa fa-cutlery">&nbsp;</em>
-                        Bar/Kitchen
+                        Bar
+                    </a>
+                </li>
+            <?php }
+        }
+        if(in_array($_SESSION['user_privilege'], $bar)) {
+            if (isset($_GET['kitchen'])){ ?>
+                <li class="active">
+                    <a href="index.php?kitchen"><em class="fa fa-cutlery">&nbsp;</em>
+                        Kitchen
+                    </a>
+                </li>
+            <?php } else{?>
+                <li>
+                <a href="index.php?kitchen"><em class="fa fa-cutlery">&nbsp;</em>
+                        Kitchen
                     </a>
                 </li>
             <?php }
@@ -209,6 +224,19 @@
                 <li>
                     <a href="index.php?inventory"><em class="fa fa-shopping-basket">&nbsp;</em>
                         Inventory
+                    </a>
+                </li>
+            <?php }
+            if (isset($_GET['menu'])){ ?>
+                <li class="active">
+                    <a href="index.php?menu"><em class="fa fa-shopping-basket">&nbsp;</em>
+                        Menu
+                    </a>
+                </li>
+            <?php } else{?>
+                <li>
+                    <a href="index.php?menu"><em class="fa fa-shopping-basket">&nbsp;</em>
+                        Menu
                     </a>
                 </li>
             <?php }

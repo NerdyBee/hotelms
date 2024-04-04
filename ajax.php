@@ -231,12 +231,37 @@ if (isset($_POST['edit_laundry'])) {
 
 if (isset($_POST['edit_item'])) {
     $item = $_POST['item'];
-    $category = $_POST['category'];
     $price = $_POST['price'];
     $item_id = $_POST['item_id'];
 
-    if ($item != '' && isset($category) && $category != '') {
-        $query = "UPDATE inventory SET item = '$item',category = '$category',price = '$price' where item_id = '$item_id'";
+    if ($item != '' && isset($price)) {
+        $query = "UPDATE inventory SET item = '$item',price = '$price' where item_id = '$item_id'";
+        $result = mysqli_query($connection, $query);
+
+        if ($result) {
+            $response['done'] = true;
+            $response['data'] = 'Successfully Edit Room';
+        } else {
+            $response['done'] = false;
+            $response['data'] = "DataBase Error";
+        }
+
+    } else {
+
+        $response['done'] = false;
+        $response['data'] = "Please Enter Room No";
+    }
+
+    echo json_encode($response);
+}
+
+if (isset($_POST['edit_menu'])) {
+    $item = $_POST['item'];
+    $price = $_POST['price'];
+    $item_id = $_POST['item_id'];
+
+    if ($item != '' && isset($price)) {
+        $query = "UPDATE menu SET item = '$item',price = '$price' where item_id = '$item_id'";
         $result = mysqli_query($connection, $query);
 
         if ($result) {
@@ -1100,6 +1125,22 @@ if (isset($_POST['createInvoice'])) {
 
 }
 
+if (isset($_POST['createKitchenInvoice'])) {
+    $description = $_POST['customer'];
+    $added_by = $_SESSION['user_id'];
+
+    $query = "INSERT INTO kitchen_invoice (description,added_by) VALUES ('$description','$added_by')";
+    $result = mysqli_query($connection, $query);
+    $inv_id = mysqli_insert_id($connection);
+    if ($result) {
+        $_SESSION['kitchen_invoice_no'] = $inv_id;
+        header("Location:index.php?kitchen_sales");
+    } else {
+        header("Location:index.php?kitchen&error");
+    }
+
+}
+
 if (isset($_POST['createLaundryInvoice'])) {
     $description = $_POST['customer'];
     $added_by = $_SESSION['user_id'];
@@ -1124,6 +1165,27 @@ if(isset($_POST['saveInvoice'])) {
     $inv = $_POST['invoice_no'];
 
     $query = "UPDATE invoice set paid = '$paid', room_id = '$room', payment_type = '$payment_type', total_price = $total_price WHERE id = '$inv'";
+    $result = mysqli_query($connection, $query);
+    if(isset($room) && $room != '' && $room != ' '){
+        $booking_query = "UPDATE booking set extras = extras + '$total_price' WHERE room_id = '$room' AND checkout_status = 0";
+        $booking_result = mysqli_query($connection, $booking_query);
+    }
+
+    if ($result) {
+        header("Location:index.php?bar");
+    } else {
+        header("Location:index.php?sales&error&" . mysqli_error($connection));
+    }
+}
+
+if(isset($_POST['saveKitchenInvoice'])) {
+    $room = $_POST['room'];
+    $paid = $_POST['paid'];
+    $payment_type = $_POST['payment_type'];
+    $total_price = $_POST['total_price'];
+    $inv = $_POST['invoice_no'];
+
+    $query = "UPDATE kitchen_invoice set paid = '$paid', room_id = '$room', payment_type = '$payment_type', total_price = $total_price WHERE id = '$inv'";
     $result = mysqli_query($connection, $query);
     if(isset($room) && $room != '' && $room != ' '){
         $booking_query = "UPDATE booking set extras = extras + '$total_price' WHERE room_id = '$room' AND checkout_status = 0";
@@ -1212,6 +1274,31 @@ if (isset($_POST['createSales'])) {
 
 }
 
+if (isset($_POST['createKitchenSales'])) {
+    $item = $_POST['item'];
+    $inv = $_SESSION['kitchen_invoice_no'];
+    $quantity = $_POST['quantity'];
+    $added_by = $_SESSION['user_id'];
+
+    $query1 = "SELECT * FROM menu WHERE item_id = $item";
+    $result1 = mysqli_query($connection, $query1);
+    $item_details = mysqli_fetch_assoc($result1);
+    $price = $item_details['price'];
+    if ($result1){
+        $sub_total = $price * $quantity;
+        $query = "INSERT INTO kitchen_sales (invoice_id,item_id,price,quantity,sub_total,added_by) VALUES ('$inv','$item','$price','$quantity','$sub_total','$added_by')";
+        $result = mysqli_query($connection, $query);
+        if ($result) {
+            header("Location:index.php?kitchen_sales");
+        } else {
+            header("Location:index.php?kitchen_sales&error");
+        }
+    } else {
+        header("Location:index.php?kitchen_sales&errorItem");
+    }
+
+}
+
 if (isset($_POST['editSales'])) {
     $item = $_POST['item'];
     $inv = $_POST['invoice_no'];
@@ -1246,6 +1333,18 @@ if (isset($_GET['delete_invoice_item'])) {
         header("Location:index.php?sales&invoice=".$inv_id."&delete_success");
     } else {
         header("Location:index.php?sales&invoice=".$inv_id."&error");
+    }
+}
+
+if (isset($_GET['delete_kitchen_invoice_item'])) {
+    $sales_id = $_GET['delete_kitchen_invoice_item'];
+    $inv_id = $_GET['inv'];
+    $sql = "DELETE FROM kitchen_sales WHERE id = $sales_id";
+    $result = mysqli_query($connection, $sql);
+    if ($result) {
+        header("Location:index.php?kitchen_sales&invoice=".$inv_id."&delete_success");
+    } else {
+        header("Location:index.php?kitchen_sales&invoice=".$inv_id."&error");
     }
 }
 
@@ -1327,15 +1426,25 @@ if (isset($_POST['createLaundry'])) {
 if (isset($_POST['createItem'])) {
     $item_name = $_POST['item_name'];
     $price = $_POST['price'];
-    $category = $_POST['category'];
 
-    $query = "INSERT INTO inventory (item,category,price,quantity) VALUES ('$item_name','$category', '$price', 0)";
+    $query = "INSERT INTO inventory (item,price) VALUES ('$item_name', '$price')";
     $result = mysqli_query($connection, $query);    if ($result) {
         header("Location:index.php?inventory&success");
     } else {
         header("Location:index.php?inventory&error");
     }
+}
 
+if (isset($_POST['createMenu'])) {
+    $item_name = $_POST['item_name'];
+    $price = $_POST['price'];
+
+    $query = "INSERT INTO menu (item,price) VALUES ('$item_name', '$price')";
+    $result = mysqli_query($connection, $query);    if ($result) {
+        header("Location:index.php?menu&success");
+    } else {
+        header("Location:index.php?menu&error");
+    }
 }
 
 if (isset($_POST['gym_edit'])) {

@@ -4,7 +4,7 @@
             <li><a href="#">
                     <em class="fa fa-home"></em>
                 </a></li>
-            <li class="active">Inventory</li>
+            <li class="active">Menu</li>
         </ol>
     </div><!--/.row-->
 
@@ -13,7 +13,7 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="panel panel-default">
-                <div class="panel-heading">Add Item</div>
+                <div class="panel-heading">Add Menu</div>
                 <div class="panel-body">
                     <?php
                     if (isset($_GET['error'])) {
@@ -48,7 +48,7 @@
 
                         </div>
 
-                        <button type="submit" class="btn btn-lg btn-success" name="createItem" style="border-radius:0%">Submit</button>
+                        <button type="submit" class="btn btn-lg btn-success" name="createMenu" style="border-radius:0%">Submit</button>
                         <button type="reset" class="btn btn-lg btn-danger" style="border-radius:0%">Reset</button>
                     </form>
                 </div>
@@ -59,7 +59,7 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="panel panel-default">
-                <div class="panel-heading">Inventory Items</div>
+                <div class="panel-heading">Menu Items</div>
                 <div class="panel-body">
                     <?php
                     if (isset($_GET['resolveError'])) {
@@ -79,13 +79,12 @@
                             <th>#</th>
                             <th>Item Name</th>
                             <th>Price</th>
-                            <th>Stock</th>
                             <th>Action</th>
                         </tr>
                         </thead>
                         <tbody>
                         <?php
-                        $inventory_query = "SELECT * FROM inventory";
+                        $inventory_query = "SELECT * FROM menu";
                         $inventory_result = mysqli_query($connection, $inventory_query);
                         if (mysqli_num_rows($inventory_result) > 0) {
                             $num = 0;
@@ -96,7 +95,6 @@
                                     <td><?php echo $num ?></td>
                                     <td><?php echo $inventory['item'] ?></td>
                                     <td><?php echo number_format($inventory['price']) ?></td>
-                                    <td><?php echo get_stok($inventory['item_id']) ?></td>
                                     <td>
                                         <button title="Edit Item" style="border-radius:60px;" data-toggle="modal"
                                                 data-target="#editItem" data-id="<?php echo $inventory['item_id']; ?>"
@@ -159,7 +157,7 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-lg-12">
-                            <form id="itemEditFrom" data-toggle="validator" role="form">
+                            <form id="menuEditFrom" data-toggle="validator" role="form">
                                 <div class="edit_response"></div>
 
                                 <div class="form-group">
@@ -189,38 +187,5 @@
         <p class="back-link">Developed By Bashir Abdulhakeem</p>
         </div>
     </div>
-    <?php
-        function get_category($vl){
-            global $connection;
-            $query = "SELECT * from departments WHERE id = $vl";
-            $result = mysqli_query($connection, $query);
-
-            $itemDetails = mysqli_fetch_assoc($result);
-            echo $itemDetails['name'];
-        };
-
-        function get_stok($vl){
-            global $connection;
-            $query_supply = "SELECT sum(quantity) AS s_supply FROM supply WHERE item_id = $vl";
-            $query_sales = "SELECT sum(quantity) AS s_sales FROM sales WHERE item_id = $vl";
-            $result_supply = mysqli_query($connection, $query_supply);
-            $result_sales = mysqli_query($connection, $query_sales);
-
-            if($result_supply) {
-                $sum_supply = mysqli_fetch_assoc($result_supply);
-                $sup = $sum_supply['s_supply'];
-            } else {
-                $sup = 0;
-            }
-            if($result_sales) {
-                $sum_sales = mysqli_fetch_assoc($result_sales);
-                $sal = $sum_sales['s_sales'];
-            } else {
-                $sal = 0;
-            }
-            echo $sup - $sal;
-            // echo $sal;
-        };
-    ?>
 
 </div>    <!--/.main-->

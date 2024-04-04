@@ -259,7 +259,6 @@ $("#morePayment_p").submit(function () {
 
 $("#itemEditFrom").submit(function () {
   var item = $("#edit_item").val();
-  var category = $("#edit_category").val();
   var price = $("#edit_price").val();
   var item_id = $("#edit_item_id").val();
 
@@ -270,7 +269,6 @@ $("#itemEditFrom").submit(function () {
     data: {
       item_id: item_id,
       item: item,
-      category: category,
       price: price,
       edit_item: "",
     },
@@ -278,6 +276,38 @@ $("#itemEditFrom").submit(function () {
       if (response.done == true) {
         $("#editItem").modal("hide");
         window.location.href = "index.php?inventory";
+      } else {
+        $(".response").html(
+          '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>' +
+            response.data +
+            "</div>"
+        );
+      }
+    },
+  });
+
+  return false;
+});
+
+$("#menuEditFrom").submit(function () {
+  var item = $("#edit_item").val();
+  var price = $("#edit_price").val();
+  var item_id = $("#edit_item_id").val();
+
+  $.ajax({
+    type: "post",
+    url: "ajax.php",
+    dataType: "JSON",
+    data: {
+      item_id: item_id,
+      item: item,
+      price: price,
+      edit_menu: "",
+    },
+    success: function (response) {
+      if (response.done == true) {
+        $("#editMenu").modal("hide");
+        window.location.href = "index.php?menu";
       } else {
         $(".response").html(
           '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>' +

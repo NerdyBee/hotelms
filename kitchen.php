@@ -4,7 +4,7 @@
             <li><a href="#">
                     <em class="fa fa-home"></em>
                 </a></li>
-            <li class="active">Bar</li>
+            <li class="active">Kitchen</li>
         </ol>
     </div><!--/.row-->
 
@@ -13,7 +13,7 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="panel panel-default">
-                <div class="panel-heading">Make Sales</div>
+                <div class="panel-heading">Make Kitchen Sales</div>
                 <div class="panel-body">
                     <?php
                     if (isset($_GET['error'])) {
@@ -35,7 +35,7 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-lg btn-success" name="createInvoice" style="border-radius:0%">New Transaction</button>
+                        <button type="submit" class="btn btn-lg btn-success" name="createKitchenInvoice" style="border-radius:0%">New Transaction</button>
                     </form>
                 </div>
             </div>
@@ -45,7 +45,7 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="panel panel-default">
-                <div class="panel-heading">Invoices</div>
+                <div class="panel-heading">Kitchen Invoices</div>
                 <div class="panel-body">
                     <?php
                     if (isset($_GET['resolveError'])) {
@@ -75,7 +75,7 @@
                         </thead>
                         <tbody>
                         <?php
-                        $invoice_query = "SELECT * FROM invoice ORDER BY id desc";
+                        $invoice_query = "SELECT * FROM kitchen_invoice ORDER BY id desc";
                         $invoice_result = mysqli_query($connection, $invoice_query);
                         if (mysqli_num_rows($invoice_result) > 0) {
                             $num = 0;
@@ -92,7 +92,7 @@
                                     <td><?php echo $invoice['room_id'] ? get_room_name($invoice['room_id']) : "" ?></td>
                                     <td><?php echo date('M j, Y',strtotime($invoice['created_at'])) ?></td>
                                     <td>
-                                        <a title="Edit Invoice" href="index.php?editInvoice&invoice=<?php echo $invoice['id']; ?>"
+                                        <a title="Edit Invoice" href="index.php?editKitchenInvoice&invoice=<?php echo $invoice['id']; ?>"
                                            class="btn btn-info" style="border-radius:60px;"><i
                                                     class="fa fa-pencil" alt="edit"></i></a>
 

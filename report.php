@@ -14,7 +14,7 @@
         <div class="col-lg-12">
             <div class="panel panel-default">
                 <div class="panel-heading">Bookings Details:
-                    <a href="index.php?sales_report" class="btn btn-secondary pull-right" style="border-radius:0%">Bar/Kitchen Report</a>
+                    <a href="index.php?sales_report" class="btn btn-secondary pull-right" style="border-radius:0%">Bar Report</a>
                     <a href="index.php?complaint_report" class="btn btn-warning pull-right" style="border-radius:0%">Complaint Report</a>
                     <a href="index.php?gym_report" class="btn btn-success pull-right" style="border-radius:0%">Gym/Pool Report</a>
                     <a href="index.php?laundry_report" class="btn btn-danger pull-right" style="border-radius:0%">Laundry Report</a>

@@ -1,6 +1,6 @@
 <?php
     if (isset($_GET['invoice']) && $_GET['invoice']>0){
-        $_SESSION['invoice_no'] = $_GET['invoice'];
+        $inv = $_GET['invoice'];
     }
 ?>
 <div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
@@ -9,7 +9,7 @@
             <li><a href="#">
                     <em class="fa fa-home"></em>
                 </a></li>
-            <li class="active">Bar</li>
+            <li class="active">Kitchen</li>
         </ol>
     </div><!--/.row-->
 
@@ -18,7 +18,7 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="panel panel-default">
-                <div class="panel-heading">Make Bar Sales</div>
+                <div class="panel-heading">Make Kitchen Sales</div>
                 <div class="panel-body">
                     <?php
                     if (isset($_GET['error'])) {
@@ -44,7 +44,7 @@
                                 <select class="form-control" id="item" name="item" required data-error="Select Item">
                                     <option selected disabled>Select Item</option>
                                     <?php
-                                    $query  = "SELECT * FROM inventory";
+                                    $query  = "SELECT * FROM menu";
                                     $result = mysqli_query($connection,$query);
                                     if (mysqli_num_rows($result) > 0){
                                         while ($item = mysqli_fetch_assoc($result)){
@@ -61,10 +61,11 @@
                                 <input type="number" class="form-control" placeholder="Quantity" name="quantity" required />
                                 <div class="help-block with-errors"></div>
                             </div>
+                            <input type="hidden" name="invoice_no" value="<?php echo $inv; ?>" />
 
                         </div>
 
-                        <button type="submit" class="btn btn-lg btn-success" name="createSales" style="border-radius:0%">Add</button>
+                        <button type="submit" class="btn btn-lg btn-success" name="editSales" style="border-radius:0%">Add</button>
                         <!-- <button type="reset" class="btn btn-lg btn-danger" style="border-radius:0%">Reset</button> -->
                     </form>
                 </div>
@@ -79,8 +80,8 @@
                 <div class="panel-body">
                     <h2 class="title-anchor title-heading"><?php echo $company_name?></h2>
 					<p>Tel: <?php echo $company_phone?></p>
-                    <p>Invoice No.: <?php echo sprintf("%06d", $_SESSION['invoice_no'])?></p>
-					<p>Bar Invoice</p>
+                    <p>Invoice No.: <?php echo sprintf("%06d", $inv)?></p>
+					<p>Kitchen Invoice</p>
                 </div>
                 <div class="panel-body">
                     <?php
@@ -110,8 +111,8 @@
                             
                             <?php
                                 $tot = 0;
-                                $invId = $_SESSION['invoice_no'];
-                                $sale_query = "SELECT * FROM sales WHERE invoice_id = $invId";
+                                $invId = $inv;
+                                $sale_query = "SELECT * FROM kitchen_sales WHERE invoice_id = $invId";
                                 $sale_result = mysqli_query($connection, $sale_query);
                                 if (mysqli_num_rows($sale_result) > 0) {
                                     $num = 0;
@@ -150,7 +151,7 @@
                         <div>
                             <h4 class="">Charge To Room</h4>
                         </div>
-                        <form role="form" id="bar" data-toggle="validator" method="post" action="ajax.php">    
+                        <form role="form" id="kitchen" data-toggle="validator" method="post" action="ajax.php">    
                             <div class="col-md-12">
                                 <div class="form-group col-lg-6">
                                     <label>Payment Type</label>
@@ -158,13 +159,13 @@
                                             data-error="Select Payment Type">
                                         <option selected disabled>Select Payment Type</option>
                                         <?php
-                                            $query = "SELECT * FROM payment_type";
-                                            $result = mysqli_query($connection, $query);
-                                            if (mysqli_num_rows($result) > 0) {
-                                                while ($payment_type = mysqli_fetch_assoc($result)) {
-                                                    echo '<option value="' . $payment_type['payment_type'] . '">' . $payment_type['payment_type'] . '</option>';
-                                                }
+                                        $query = "SELECT * FROM payment_type";
+                                        $result = mysqli_query($connection, $query);
+                                        if (mysqli_num_rows($result) > 0) {
+                                            while ($payment_type = mysqli_fetch_assoc($result)) {
+                                                echo '<option value="' . $payment_type['payment_type'] . '">' . $payment_type['payment_type'] . '</option>';
                                             }
+                                        }
                                         ?>
                                     </select>
                                     <div class="help-block with-errors"></div>
@@ -197,7 +198,7 @@
                             </div>
                             
                             <div class="form-group col-lg-6">
-                                <button type="submit" class="btn btn-lg btn-success" name="saveInvoice" style="border-radius:0%">Post Invoice</button>
+                                <button type="submit" class="btn btn-lg btn-success" name="saveKitchenInvoice" style="border-radius:0%">Post Invoice</button>
                                 <!-- <button type="reset" class="btn btn-lg btn-danger" style="border-radius:0%">Reset</button> -->
                             </div>
                         </form>
@@ -246,7 +247,7 @@
     <?php
         function get_item_name($vl){
             global $connection;
-            $query = "SELECT * from inventory WHERE item_id = $vl";
+            $query = "SELECT * from menu WHERE item_id = $vl";
             $result = mysqli_query($connection, $query);
 
             $itemDetails = mysqli_fetch_assoc($result);
@@ -254,4 +255,4 @@
         };
     ?>
 
-</div>    <!--/.main-->
+</>    <!--/.main-->

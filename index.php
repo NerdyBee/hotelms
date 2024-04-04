@@ -67,6 +67,15 @@ elseif (isset($_GET['bar'])){
 elseif (isset($_GET['sales'])){
     include_once "bar.php";
 }
+elseif (isset($_GET['kitchen'])){
+    include_once "kitchen.php";
+}
+elseif (isset($_GET['kitchen_sales'])){
+    include_once "kitchen_sales.php";
+}
+elseif (isset($_GET['editKitchenInvoice'])){
+    include_once "edit_kitchen_invoice.php";
+}
 elseif (isset($_GET['supply'])){
     include_once "supply.php";
 }
@@ -75,6 +84,9 @@ elseif (isset($_GET['editInvoice'])){
 }
 elseif (isset($_GET['inventory'])){
     include_once "inventory.php";
+}
+elseif (isset($_GET['menu'])){
+    include_once "menu.php";
 }
 elseif (isset($_GET['laundry'])){
     include_once "wash.php";
