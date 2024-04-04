@@ -118,7 +118,7 @@ if (isset($_GET['id'])){
                     </div>
                     <div class="form-group col-lg-6">
                         <label>Discount</label>
-                        <input type="number" class="form-control" onblur="myFunction()" id="discount" data-error="Discount can't be more than 40% of cost">
+                        <input type="number" class="form-control" onblur="myFunction_more()" id="discount" data-error="Discount can't be more than 40% of cost">
                         <div class="help-block with-errors"></div>
                     </div>
                     <div class="form-group col-lg-6">

@@ -241,6 +241,8 @@
                                 <input type="text" class="form-control" placeholder="Full Address" id="address" value="<?php echo $get_address ?>" required>
                                 <div class="help-block with-errors"></div>
                             </div>
+                            <input type="hidden" name="booking_id" id="booking_id" value="<?php echo $get_reserv_id ?>" required />
+                            <input type="hidden" name="customer_id" id="customer_id" value="<?php echo $get_customer_id ?>" required />
                         </div>
                     </div>
                     <button type="submit" class="btn btn-lg btn-success pull-right" style="border-radius:0%">Submit</button>

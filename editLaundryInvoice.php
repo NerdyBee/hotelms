@@ -9,7 +9,7 @@
             <li><a href="#">
                     <em class="fa fa-home"></em>
                 </a></li>
-            <li class="active">Bar/Kitchen</li>
+            <li class="active">Laundry Services</li>
         </ol>
     </div><!--/.row-->
 
@@ -18,7 +18,7 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="panel panel-default">
-                <div class="panel-heading">Make Sales</div>
+                <div class="panel-heading">Render Service</div>
                 <div class="panel-body">
                     <?php
                     if (isset($_GET['error'])) {
@@ -40,15 +40,15 @@
                     <form role="form" data-toggle="validator" method="post" action="ajax.php">
                         <div class="row">
                             <div class="form-group col-lg-6">
-                                <label>Inventory </label>
-                                <select class="form-control" id="item" name="item" required data-error="Select Item">
-                                    <option selected disabled>Select Item</option>
+                                <label>Laundry Services </label>
+                                <select class="form-control" id="apparel" name="apparel" required data-error="Select Apparel">
+                                    <option selected disabled>Select Apparel</option>
                                     <?php
-                                    $query  = "SELECT * FROM inventory";
+                                    $query  = "SELECT * FROM laundry";
                                     $result = mysqli_query($connection,$query);
                                     if (mysqli_num_rows($result) > 0){
                                         while ($item = mysqli_fetch_assoc($result)){
-                                            echo '<option value="'.$item['item_id'].'">'.$item['item'].'</option>';
+                                            echo '<option value="'.$item['id'].'">'.$item['apparel'].'</option>';
                                         }}
                                     ?>
                                 </select>
@@ -57,15 +57,24 @@
                             
 
                             <div class="form-group col-lg-6">
+                                <label>Service Type</label>
+                                <select class="form-control" id="serv" name="serv_type" required data-error="Select Type">
+                                    <option selected disabled>Select Service</option>
+                                    <option value="wash_iron">Wash & Iron</option>
+                                    <option value="iron">Iron</option>
+                                </select>
+                                <div class="help-block with-errors"></div>
+                            </div>
+
+                            <div class="form-group col-lg-6">
                                 <label>Quantity</label>
                                 <input type="number" class="form-control" placeholder="Quantity" name="quantity" required />
                                 <div class="help-block with-errors"></div>
                             </div>
-                            <input type="hidden" name="invoice_no" value="<?php echo $inv; ?>" />
 
                         </div>
 
-                        <button type="submit" class="btn btn-lg btn-success" name="editSales" style="border-radius:0%">Add</button>
+                        <button type="submit" class="btn btn-lg btn-success" name="createService" style="border-radius:0%">Add</button>
                         <!-- <button type="reset" class="btn btn-lg btn-danger" style="border-radius:0%">Reset</button> -->
                     </form>
                 </div>
@@ -76,12 +85,12 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="panel panel-default">
-                <div class="panel-heading">Invoice Content</div>
+                <div class="panel-heading">Laundry Invoice Content</div>
                 <div class="panel-body">
                     <h2 class="title-anchor title-heading"><?php echo $company_name?></h2>
 					<p>Tel: <?php echo $company_phone?></p>
                     <p>Invoice No.: <?php echo sprintf("%06d", $inv)?></p>
-					<p>Kitchen/Bar Invoice</p>
+					<p>Laundry Invoice</p>
                 </div>
                 <div class="panel-body">
                     <?php
@@ -111,8 +120,8 @@
                             
                             <?php
                                 $tot = 0;
-                                $invId = $inv;
-                                $sale_query = "SELECT * FROM sales WHERE invoice_id = $invId";
+                                $invId = $_SESSION['laundry_invoice'];
+                                $sale_query = "SELECT * FROM laundry_jobs WHERE invoice_id = $invId";
                                 $sale_result = mysqli_query($connection, $sale_query);
                                 if (mysqli_num_rows($sale_result) > 0) {
                                     $num = 0;
@@ -122,20 +131,19 @@
                                         ?>
                                         <tr>
                                             <td><?php echo $num ?></td>
-                                            <td><?php get_item_name($sale['item_id']) ?></td>
+                                            <td><?php get_item_name($sale['laundry_id']) ?></td>
                                             <td><?php echo number_format($sale['price']) ?></td>
-                                            <!-- <td><input type="number" name="qty" value="<-?php echo $sale['quantity'] ?>" id="qty" /></td> -->
                                             <td><?php echo $sale['quantity'] ?></td>
                                             <td><?php echo number_format($sale['sub_total']) ?></td>
                                             <td>
-                                                <a href="ajax.php?&inv=<?php echo $invId; ?>&delete_invoice_item=<?php echo $sale['id']; ?>"
+                                                <a href="ajax.php?&inv=<?php echo $invId ?>&delete_laundry_invoice_item=<?php echo $sale['id']; ?>"
                                                     class="btn btn-danger" style="border-radius:60px;" onclick="return confirm('Are you Sure?')"><i
                                                                 class="fa fa-trash" alt="delete"></i></a>
                                             </td>
                                         </tr>
                                     <?php }
                                 } else {
-                                    echo "No Sales in invoice";
+                                    echo "No Service in invoice";
                                 }
                             ?>
                             <tr>
@@ -149,7 +157,7 @@
                     </table>
                     <div class="panel-body">
                         <div>
-                            <h4 class="">Charge To Room</h4>
+                            <h4 class="">Payment Info</h4>
                         </div>
                         <form role="form" id="bar" data-toggle="validator" method="post" action="ajax.php">    
                             <div class="col-md-12">
@@ -159,13 +167,13 @@
                                             data-error="Select Payment Type">
                                         <option selected disabled>Select Payment Type</option>
                                         <?php
-                                        $query = "SELECT * FROM payment_type";
-                                        $result = mysqli_query($connection, $query);
-                                        if (mysqli_num_rows($result) > 0) {
-                                            while ($payment_type = mysqli_fetch_assoc($result)) {
-                                                echo '<option value="' . $payment_type['payment_type'] . '">' . $payment_type['payment_type'] . '</option>';
+                                            $query = "SELECT * FROM payment_type";
+                                            $result = mysqli_query($connection, $query);
+                                            if (mysqli_num_rows($result) > 0) {
+                                                while ($payment_type = mysqli_fetch_assoc($result)) {
+                                                    echo '<option value="' . $payment_type['payment_type'] . '">' . $payment_type['payment_type'] . '</option>';
+                                                }
                                             }
-                                        }
                                         ?>
                                     </select>
                                     <div class="help-block with-errors"></div>
@@ -198,7 +206,7 @@
                             </div>
                             
                             <div class="form-group col-lg-6">
-                                <button type="submit" class="btn btn-lg btn-success" name="saveInvoice" style="border-radius:0%">Post Invoice</button>
+                                <button type="submit" class="btn btn-lg btn-success" name="saveLaundryInvoice" style="border-radius:0%">Post Invoice</button>
                                 <!-- <button type="reset" class="btn btn-lg btn-danger" style="border-radius:0%">Reset</button> -->
                             </div>
                         </form>
@@ -247,12 +255,12 @@
     <?php
         function get_item_name($vl){
             global $connection;
-            $query = "SELECT * from inventory WHERE item_id = $vl";
+            $query = "SELECT * from laundry WHERE id = $vl";
             $result = mysqli_query($connection, $query);
 
             $itemDetails = mysqli_fetch_assoc($result);
-            echo $itemDetails['item'];
+            echo $itemDetails['apparel'];
         };
     ?>
 
-</>    <!--/.main-->
+</div>    <!--/.main-->

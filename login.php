@@ -19,7 +19,7 @@
 
 <div class="container">
     <div class="card card-container">
-        <img id="profile-img" class="profile-img-card" src="img/htl.png"/>
+        <img id="profile-img" class="profile-img-card" src="img/lamonde_logo.png"/>
         
         <br>
         <div class="result">

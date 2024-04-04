@@ -112,9 +112,9 @@
                                         }
                                         ?-->
 
-                                        <a href="ajax.php?delete_invoice=<?php echo $invoice['id']; ?>"
+                                        <!-- <a href="ajax.php?delete_invoice=<-?php echo $invoice['id']; ?>"
                                            class="btn btn-danger" style="border-radius:60px;" onclick="return confirm('Are you Sure?')"><i
-                                                    class="fa fa-trash" alt="delete"></i></a>
+                                                    class="fa fa-trash" alt="delete"></i></a> -->
                                     </td>
                                 </tr>
                             <?php }

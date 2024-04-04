@@ -126,6 +126,71 @@ $("#roomTypeEditFrom").submit(function () {
   return false;
 });
 
+$(document).on("click", "#hallPayments", function (e) {
+  e.preventDefault();
+
+  var hall_id = $(this).data("id");
+  console.log(hall_id);
+
+  $.ajax({
+    type: "post",
+    url: "ajax.php",
+    dataType: "JSON",
+    data: {
+      hall_id: hall_id,
+      booked_hall: "",
+    },
+    success: function (response) {
+      if (response.done == true) {
+        $("#getCustomerName_p").html(response.name);
+        $("#getHall").html(response.hall);
+        $("#getCheckIn_p").html(response.check_in);
+        $("#getCheckOut_p").html(response.check_out);
+        $("#getTotalPrice_p").html(response.total_price);
+        $("#getRemainingPrice_p").html(response.remaining_price);
+        $("#getBookingId_h").val(response.booking_id);
+        $("#hallPaymentModal").modal("show");
+      } else {
+        alert(response.data);
+      }
+    },
+  });
+});
+
+$("#hallPayment").submit(function () {
+  var booking_id = $("#getBookingId_h").val();
+  var remaining_amount = $("#hall_payment").val();
+  var payment_type = $("#payment_type").val();
+
+  console.log(payment_type);
+
+  $.ajax({
+    type: "post",
+    url: "ajax.php",
+    dataType: "JSON",
+    data: {
+      booking_id: booking_id,
+      remaining_amount: remaining_amount,
+      payment_type: payment_type,
+      hall_payment: "",
+    },
+    success: function (response) {
+      if (response.done == true) {
+        $("#hallPaymentModal").modal("hide");
+        window.location.href = "index.php?hall_reservation_mang";
+      } else {
+        $(".payment-response").html(
+          '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>' +
+            response.data +
+            "</div>"
+        );
+      }
+    },
+  });
+
+  return false;
+});
+
 $(document).on("click", "#morePayments", function (e) {
   e.preventDefault();
 
@@ -161,7 +226,7 @@ $(document).on("click", "#morePayments", function (e) {
 $("#morePayment_p").submit(function () {
   var booking_id = $("#getBookingId_p").val();
   var remaining_amount = $("#more_payment").val();
-  var payment_type = $("#payment_type").val();
+  var payment_type = $("#payment_type_m").val();
 
   console.log(payment_type);
 
@@ -261,6 +326,7 @@ $("#laundryEditFrom").submit(function () {
 });
 
 $("#gymEditFrom").submit(function () {
+  var service = $("#edit_service").val();
   var description = $("#edit_description").val();
   var amount = $("#edit_amount").val();
   var gym_id = $("#edit_id").val();
@@ -271,6 +337,7 @@ $("#gymEditFrom").submit(function () {
     dataType: "JSON",
     data: {
       gym_id: gym_id,
+      service: service,
       description: description,
       amount: amount,
       edit_gym: "",
@@ -309,6 +376,7 @@ $(document).on("click", "#gymEdit", function (e) {
     },
     success: function (response) {
       if (response.done == true) {
+        $("#edit_service").val(response.service);
         $("#edit_description").val(response.description);
         $("#edit_amount").val(response.amount);
         $("#edit_id").val(response.id);
@@ -473,17 +541,12 @@ $("#hallBooking").submit(function () {
   var check_in_date = $("#check_in_date").val();
   var check_out_date = $("#check_out_date").val();
   var discount = $("#discount").val();
-  var first_name = $("#first_name").val();
-  var last_name = $("#last_name").val();
+  var full_name = $("#full_name").val();
   var contact_no = $("#contact_no").val();
-  var email = $("#email").val();
-  var id_card_id = $("#id_card_id").val();
-  var id_card_no = $("#id_card_no").val();
-  var address = $("#address").val();
   var total_p = document.getElementById("total_price").innerHTML;
   var total_price = total_p - discount;
 
-  if (!hall && !first_name && !contact_no && !address) {
+  if (!hall_id && !full_name && !contact_no) {
     $(".response").html(
       '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>Please Fill Cardinality</div>'
     );
@@ -499,29 +562,26 @@ $("#hallBooking").submit(function () {
       dataType: "JSON",
       data: {
         hall_id: hall_id,
+        hall: hall,
         check_in: check_in_date,
         check_out: check_out_date,
         discount: discount,
         total_price: total_price,
-        name: first_name + " " + last_name,
+        name: full_name,
         contact_no: contact_no,
-        email: email,
-        id_card_id: id_card_id,
-        id_card_no: id_card_no,
-        address: address,
         hall_booking: "",
       },
       success: function (response) {
         if (response.done == true) {
-          $("#getCustomerName").html(first_name + " " + last_name);
+          $("#getCustomerName").html(full_name);
           $("#getHall").html(hall);
           $("#getCheckIn").html(check_in_date);
           $("#getCheckOut").html(check_out_date);
           $("#getDiscount").html(new Intl.NumberFormat().format(discount));
           $("#getTotalPrice").html(new Intl.NumberFormat().format(total_price));
           $("#getPaymentStaus").html("Unpaid");
-          $("#bookingConfirm").modal("show");
-          document.getElementById("booking").reset();
+          $("#hallBookingConfirm").modal("show");
+          document.getElementById("hallBooking").reset();
         } else {
           $(".response").html(
             '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>' +
@@ -536,11 +596,122 @@ $("#hallBooking").submit(function () {
   return false;
 });
 
+$("#edit_hallBooking").submit(function () {
+  var booking_id = $("#booking_id").val();
+  var customer_id = $("#customer_id").val();
+  var hall_id = $("#hall").val();
+  var hall = $("#hall :selected").text();
+  var check_in_date = $("#check_in_date").val();
+  var check_out_date = $("#check_out_date").val();
+  var discount = $("#discount").val();
+  var full_name = $("#full_name").val();
+  var contact_no = $("#contact_no").val();
+  var total_p = document.getElementById("total_price").innerHTML;
+  var total_price = total_p - discount;
+
+  if (!hall_id && !full_name && !contact_no) {
+    $(".response").html(
+      '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>Please Fill Cardinality</div>'
+    );
+  } else if (discount > (40 / 100) * total_p) {
+    $(".response").html(
+      '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>Dsicount Cannot be more than 40%</div>'
+    );
+  } else {
+    console.log(total_price);
+    $.ajax({
+      type: "post",
+      url: "ajax.php",
+      dataType: "JSON",
+      data: {
+        booking_id: booking_id,
+        customer_id: customer_id,
+        hall_id: hall_id,
+        hall: hall,
+        check_in: check_in_date,
+        check_out: check_out_date,
+        discount: discount,
+        total_price: total_price,
+        name: full_name,
+        contact_no: contact_no,
+        edit_hall_booking: "",
+      },
+      success: function (response) {
+        if (response.done == true) {
+          $("#getCustomerName").html(full_name);
+          $("#getHall").html(hall);
+          $("#getCheckIn").html(check_in_date);
+          $("#getCheckOut").html(check_out_date);
+          $("#getDiscount").html(new Intl.NumberFormat().format(discount));
+          $("#getTotalPrice").html(new Intl.NumberFormat().format(total_price));
+          $("#getPaymentStaus").html("Unpaid");
+          $("#hallBookingConfirm").modal("show");
+          document.getElementById("hallBooking").reset();
+        } else {
+          $(".response").html(
+            '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>' +
+              response.data +
+              "</div>"
+          );
+        }
+      },
+    });
+  }
+
+  return false;
+});
+
+$(document).on("click", "#hallCutomerDetails", function (e) {
+  e.preventDefault();
+
+  var hall_id = $(this).data("id");
+  // alert(room_id);
+  console.log(hall_id);
+
+  $.ajax({
+    type: "post",
+    url: "ajax.php",
+    dataType: "JSON",
+    data: {
+      hall_id: hall_id,
+      hallCutomerDetails: "",
+    },
+    success: function (response) {
+      if (response.done == true) {
+        $("#customer_name").html(response.customer_name);
+        $("#customer_contact_no").html(response.contact_no);
+        $("#remaining_price").html(
+          new Intl.NumberFormat().format(response.remaining_price)
+        );
+      } else {
+        $(".cust_response").html(
+          '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>' +
+            response.data +
+            "</div>"
+        );
+      }
+    },
+  });
+});
+
 function myFunction() {
   // console.log("first");
   var x = document.getElementById("discount").value;
+  var xd =
+    document.getElementById("discount").value /
+    document.getElementById("staying_day").innerHTML;
   document.getElementById("price").innerHTML =
-    document.getElementById("price").innerHTML - x;
+    document.getElementById("price").innerHTML - xd;
+  document.getElementById("disco").innerHTML = x;
+  document.getElementById("total_pay").innerHTML =
+    document.getElementById("total_price").innerHTML - x;
+}
+
+function myFunction_more() {
+  // console.log("first");
+  var x = document.getElementById("discount").value;
+  document.getElementById("price").innerHTML =
+    document.getElementById("price").innerHTML;
   document.getElementById("disco").innerHTML = x;
   document.getElementById("total_pay").innerHTML =
     document.getElementById("total_price").innerHTML - x;

@@ -1,3 +1,36 @@
+<?php
+    if (isset($_GET['booking_id'])){
+        $get_reserv_id = $_GET['booking_id'];
+        $get_reserv_sql = "SELECT * FROM hall_booking NATURAL JOIN hall_customer NATURAL JOIN halls WHERE booking_id = '$get_reserv_id'";
+        $get_reserv_result = mysqli_query($connection,$get_reserv_sql);
+        $get_reserv = mysqli_fetch_assoc($get_reserv_result);
+
+        $get_customer_id = $get_reserv['customer_id'];
+        $get_customer_name = $get_reserv['customer_name'];
+        $get_contact = $get_reserv['contact_no'];
+        $get_reserv_hall_id = $get_reserv['hall_id'];
+        $get_reserv_hall = $get_reserv['hall'];
+        $get_reserv_discount = $get_reserv['discount'];
+        $get_check_in = $get_reserv['check_in'];
+        $get_check_out = $get_reserv['check_out'];
+
+        $date1 = new DateTime($get_check_in);
+        $date2 = new DateTime($get_check_out);
+        $interval = $date1->diff($date2);
+        $daysDifference = $interval->days;
+
+        if($get_reserv_result){
+            $get_hall_sql = "SELECT * FROM halls WHERE hall_id = '$get_reserv_hall_id'";
+            $get_hall_result = mysqli_query($connection,$get_hall_sql);
+            $get_hall = mysqli_fetch_assoc($get_hall_result);
+
+            $get_hall_id = $get_hall['hall_id'];
+            $get_hall_name = $get_hall['hall'];
+            $get_hall_price = $get_hall['price'];
+        }
+    }
+?>
+
 <div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
     <div class="row">
         <ol class="breadcrumb">
@@ -18,7 +51,7 @@
 
     <div class="row">
         <div class="col-lg-12">
-            <form role="form" id="hallBooking" data-toggle="validator" autocomplete="off">
+            <form role="form" id="edit_hallBooking" data-toggle="validator" autocomplete="off">
                 <div class="response"></div>
                 <div class="col-lg-12">
                         <div class="panel panel-default">
@@ -35,7 +68,11 @@
                                         $result = mysqli_query($connection,$query);
                                         if (mysqli_num_rows($result) > 0){
                                             while ($hall = mysqli_fetch_assoc($result)){
-                                                echo '<option value="'.$hall['hall_id'].'">'.$hall['hall'].'</option>';
+                                                if ($hall['hall_id'] == $get_hall_id) {
+                                                    echo '<option selected value="'.$hall['hall_id'].'">'.$hall['hall'].'</option>';
+                                                } else {
+                                                    echo '<option value="'.$hall['hall_id'].'">'.$hall['hall'].'</option>';
+                                                }
                                             }}
                                         ?>
                                     </select>
@@ -44,28 +81,28 @@
 
                                 <div class="form-group col-lg-6">
                                     <label>Check In Date</label>
-                                    <input type="text" class="form-control" placeholder="mm/dd/yyyy" id="check_in_date" data-error="Select Check In Date" required>
+                                    <input type="text" class="form-control" placeholder="mm/dd/yyyy" id="check_in_date" data-error="Select Check In Date" value="<?php echo $get_check_in ?>" required>
                                     <div class="help-block with-errors"></div>
                                 </div>
 
                                 <div class="form-group col-lg-6">
                                     <label>Check Out Date</label>
-                                    <input type="text" class="form-control" placeholder="mm/dd/yyyy" id="check_out_date" data-error="Select Check Out Date" required>
+                                    <input type="text" class="form-control" placeholder="mm/dd/yyyy" id="check_out_date" data-error="Select Check Out Date" value="<?php echo $get_check_out ?>" required>
                                     <div class="help-block with-errors"></div>
                                 </div>
 
                                 <div class="form-group col-lg-6">
                                     <label>Discount</label>
-                                    <input type="number" class="form-control" onblur="myFunction()" id="discount" data-error="Discount can't be more than 40% of cost">
+                                    <input type="number" class="form-control" onblur="myFunction()" id="discount" value="<?php echo $get_reserv_discount; ?>" data-error="Discount can't be more than 40% of cost">
                                     <div class="help-block with-errors"></div>
                                 </div>
 
                                 <div class="col-lg-12">
-                                    <h4 style="font-weight: bold">Total Days : <span id="staying_day">0</span> Day(s)</h4>
-                                    <h4 style="font-weight: bold">Price: ₦<span id="price">0</span> </h4>
-                                    <h4 style="font-weight: bold">Total Amount : ₦<span id="total_price">0</span> </h4>
-                                    <h4 style="font-weight: bold">Discount : ₦<span id="disco">0</span> </h4>
-                                    <h4 style="font-weight: bold">Total Paying : ₦<span id="total_pay">0</span> </h4>
+                                    <h4 style="font-weight: bold">Total Days : <span id="staying_day"><?php echo $daysDifference; ?></span> Day(s)</h4>
+                                    <h4 style="font-weight: bold">Price: ₦<span id="price"><?php echo $get_hall_price; ?></span> </h4>
+                                    <h4 style="font-weight: bold">Total Amount : ₦<span id="total_price"><?php echo $get_hall_price * $daysDifference; ?></span> </h4>
+                                    <h4 style="font-weight: bold">Discount : ₦<span id="disco"><?php echo $get_reserv_discount; ?></span> </h4>
+                                    <h4 style="font-weight: bold">Total Paying : ₦<span id="total_pay"><?php echo $get_hall_price * $daysDifference - $get_reserv_discount; ?></span> </h4>
                                 </div>
                             </div>
                         </div>
@@ -74,15 +111,17 @@
                         <div class="panel-body">
                             <div class="form-group col-lg-6">
                                 <label>Full Name</label>
-                                <input class="form-control" placeholder="Full Name" id="full_name" data-error="Enter Full Name" required>
+                                <input class="form-control" placeholder="Full Name" value="<?php echo $get_customer_name; ?>" id="full_name" data-error="Enter Full Name" required>
                                 <div class="help-block with-errors"></div>
                             </div>
 
                             <div class="form-group col-lg-6">
                                 <label>Contact Number</label>
-                                <input type="number" class="form-control" data-error="Enter Min 10 Digit" data-minlength="10" placeholder="Contact No" id="contact_no" required>
+                                <input type="number" class="form-control" data-error="Enter Min 10 Digit" data-minlength="10" value="<?php echo $get_contact; ?>" placeholder="Contact No" id="contact_no" required>
                                 <div class="help-block with-errors"></div>
                             </div>
+                            <input type="hidden" name="booking_id" id="booking_id" value="<?php echo $get_reserv_id ?>" required />
+                            <input type="hidden" name="customer_id" id="customer_id" value="<?php echo $get_customer_id ?>" required />
                         </div>
                     </div>
                     <button type="submit" class="btn btn-lg btn-success pull-right" style="border-radius:0%">Submit</button>

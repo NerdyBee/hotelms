@@ -122,7 +122,7 @@ function fetch_room_checked(val) {
 function validId(val) {
   if (val == 1) {
     document.getElementById("id_card_no").setAttribute("type", "number");
-    document.getElementById("id_card_no").setAttribute("data-minlength", "12");
+    document.getElementById("id_card_no").setAttribute("data-minlength", "5");
     document
       .getElementById("id_card_no")
       .setAttribute("placeholder", "647510001480");
@@ -130,11 +130,11 @@ function validId(val) {
       .getElementById("id_card_no")
       .setAttribute(
         "data-error",
-        "Enter 12 Digit Valid National Identity Card No"
+        "Enter 5 Digit Valid National Identity Card No"
       );
   } else if (val == 2) {
     document.getElementById("id_card_no").setAttribute("type", "text");
-    document.getElementById("id_card_no").setAttribute("data-minlength", "11");
+    document.getElementById("id_card_no").setAttribute("data-minlength", "5");
     document
       .getElementById("id_card_no")
       .setAttribute("placeholder", "COA/2635100");
@@ -142,20 +142,20 @@ function validId(val) {
       .getElementById("id_card_no")
       .setAttribute(
         "data-error",
-        "Enter 11 Character(include '/') Valid Voter ID Card No"
+        "Enter 5 Character(include '/') Valid Voter ID Card No"
       );
   } else if (val == 3) {
     document.getElementById("id_card_no").setAttribute("type", "text");
-    document.getElementById("id_card_no").setAttribute("data-minlength", "10");
+    document.getElementById("id_card_no").setAttribute("data-minlength", "5");
     document
       .getElementById("id_card_no")
       .setAttribute("placeholder", "RKCS17878A");
     document
       .getElementById("id_card_no")
-      .setAttribute("data-error", "Enter 10 Character Valid Pan Card No");
+      .setAttribute("data-error", "Enter 5 Character Valid Pan Card No");
   } else if (val == 4) {
     document.getElementById("id_card_no").setAttribute("type", "text");
-    document.getElementById("id_card_no").setAttribute("data-minlength", "16");
+    document.getElementById("id_card_no").setAttribute("data-minlength", "5");
     document
       .getElementById("id_card_no")
       .setAttribute("placeholder", "RJ29 20210040869");
@@ -163,7 +163,7 @@ function validId(val) {
       .getElementById("id_card_no")
       .setAttribute(
         "data-error",
-        "Enter 16 Character(include space) Valid Licence Number"
+        "Enter 5 Character(include space) Valid Licence Number"
       );
   }
 }
@@ -320,6 +320,8 @@ $("#booking").submit(function () {
 });
 
 $("#edit_booking").submit(function () {
+  var booking_id = $("#booking_id").val();
+  var customer_id = $("#customer_id").val();
   var room_type_id = $("#room_type").val();
   var room_type = $("#room_type :selected").text();
   var room_id = $("#room_no").val();
@@ -352,6 +354,8 @@ $("#edit_booking").submit(function () {
       url: "ajax.php",
       dataType: "JSON",
       data: {
+        booking_id: booking_id,
+        customer_id: customer_id,
         room_type_id: room_type_id,
         room_id: room_id,
         check_in: check_in_date,
@@ -364,7 +368,7 @@ $("#edit_booking").submit(function () {
         id_card_id: id_card_id,
         id_card_no: id_card_no,
         address: address,
-        booking: "",
+        edit_booking: "",
       },
       success: function (response) {
         if (response.done == true) {
@@ -487,6 +491,9 @@ $(document).on("click", "#checkInRoom", function (e) {
         $("#getTotalPrice").html(
           new Intl.NumberFormat().format(response.total_price)
         );
+        $("#getRemainingPrice").html(
+          new Intl.NumberFormat().format(response.remaining_price)
+        );
         $("#getBookingID").val(response.booking_id);
         $("#checkIn").modal("show");
       } else {
@@ -578,6 +585,7 @@ $("#checkOutRoom_n").submit(function () {
     data: {
       booking_id: booking_id,
       remaining_amount: remaining_amount,
+      remainingPrice: remainingPrice,
       payment_type: payment_type,
       check_out_room: "",
     },

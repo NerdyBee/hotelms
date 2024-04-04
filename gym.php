@@ -30,9 +30,9 @@
                     <form role="form"  data-toggle="validator" method="post" action="ajax.php">
                         <div class="row">
                             <div class="form-group col-lg-6">
-                                <label>Description</label>
+                                <label>Service</label>
                                 <!--input type="text" class="form-control" placeholder="Description" name="description" required-->
-                                <select class="form-control" id="description" name="description" required data-error="Select">
+                                <select class="form-control" id="service" name="service" required data-error="Select Service">
                                         <option selected disabled>Select</option>
                                         <option value="gym">Gym</option>
                                         <option value="pool">Pool</option>
@@ -42,8 +42,14 @@
                             </div>
                             
                             <div class="form-group col-lg-6">
+                                <label>Description</label>
+                                <input type="text" class="form-control" placeholder="Description" name="description">
+                                <div class="help-block with-errors"></div>
+                            </div>
+                            
+                            <div class="form-group col-lg-6">
                                 <label>Amount</label>
-                                <input type="text" class="form-control" placeholder="Amount" name="amount">
+                                <input type="number" class="form-control" placeholder="Amount" name="amount">
                                 <div class="help-block with-errors"></div>
                             </div>
 
@@ -83,6 +89,7 @@
                         <thead>
                         <tr>
                             <th>#</th>
+                            <th>Service</th>
                             <th>Description</th>
                             <th>Amount</th>
                             <th>Action</th>
@@ -99,6 +106,7 @@
                                 ?>
                                 <tr>
                                     <td><?php echo $num ?></td>
+                                    <td><?php echo $laundry['service'] ?></td>
                                     <td><?php echo $laundry['description'] ?></td>
                                     <td><?php echo number_format($laundry['amount']) ?></td>
                                     <td>
@@ -109,7 +117,7 @@
                                 </tr>
                             <?php }
                         } else {
-                            echo "No Service defined";
+                            echo "No Service yet";
                         }
                         ?>
 
@@ -137,15 +145,21 @@
                                 <div class="edit_response"></div>
 
                                 <div class="form-group">
-                                    <label>Description</label>
+                                    <label>Service</label>
                                     <!--input class="form-control" placeholder="Description" id="edit_description" required
                                            data-error="Enter Description"-->
-                                    <select class="form-control" id="edit_description" required data-error="Select option">
+                                    <select class="form-control" id="edit_service" required data-error="Select option">
                                         <option selected disabled>Select</option>
                                         <option value="gym">Gym</option>
                                         <option value="pool">Pool</option>
                                         <option value="other">Others</option>
                                     </select>
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Description</label>
+                                    <input type="text" class="form-control" placeholder="Description" id="edit_description" required
+                                           data-error="Enter Description">
                                     <div class="help-block with-errors"></div>
                                 </div>
                                 <div class="form-group">

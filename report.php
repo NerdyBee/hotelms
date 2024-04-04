@@ -16,6 +16,8 @@
                 <div class="panel-heading">Bookings Details:
                     <a href="index.php?sales_report" class="btn btn-secondary pull-right" style="border-radius:0%">Bar/Kitchen Report</a>
                     <a href="index.php?complaint_report" class="btn btn-warning pull-right" style="border-radius:0%">Complaint Report</a>
+                    <a href="index.php?gym_report" class="btn btn-success pull-right" style="border-radius:0%">Gym/Pool Report</a>
+                    <a href="index.php?laundry_report" class="btn btn-danger pull-right" style="border-radius:0%">Laundry Report</a>
                 </div>
                 <div class="panel-body">
                     <?php
@@ -49,7 +51,7 @@
                         <tbody>
                         <?php
                         //$staff_query = "SELECT * FROM staff  JOIN staff_type JOIN shift ON staff.staff_type_id =staff_type.staff_type_id ON shift.";
-                        $staff_query = "SELECT * FROM booking NATURAL JOIN customer NATURAL JOIN room";
+                        $staff_query = "SELECT * FROM booking NATURAL JOIN customer NATURAL JOIN room ORDER BY booking_id DESC";
                         $staff_result = mysqli_query($connection, $staff_query);
 
                         if (mysqli_num_rows($staff_result) > 0) {

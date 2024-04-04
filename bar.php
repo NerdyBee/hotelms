@@ -1,3 +1,8 @@
+<?php
+    if (isset($_GET['invoice']) && $_GET['invoice']>0){
+        $_SESSION['invoice_no'] = $_GET['invoice'];
+    }
+?>
 <div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
     <div class="row">
         <ol class="breadcrumb">
@@ -122,7 +127,7 @@
                                             <td><?php echo $sale['quantity'] ?></td>
                                             <td><?php echo number_format($sale['sub_total']) ?></td>
                                             <td>
-                                                <a href="ajax.php?delete_invoice_item=<?php echo $sale['id']; ?>"
+                                                <a href="ajax.php?&inv=<?php echo $invId; ?>&delete_invoice_item=<?php echo $sale['id']; ?>"
                                                     class="btn btn-danger" style="border-radius:60px;" onclick="return confirm('Are you Sure?')"><i
                                                                 class="fa fa-trash" alt="delete"></i></a>
                                             </td>
