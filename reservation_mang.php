@@ -48,14 +48,17 @@
                         <tbody>
                         <?php
                         //$staff_query = "SELECT * FROM staff  JOIN staff_type JOIN shift ON staff.staff_type_id =staff_type.staff_type_id ON shift.";
-                        $staff_query = "SELECT * FROM booking NATURAL JOIN customer NATURAL JOIN room";
+                        $staff_query = "SELECT * FROM booking NATURAL JOIN customer NATURAL JOIN room ORDER BY booking_id DESC";
                         $staff_result = mysqli_query($connection, $staff_query);
 
                         if (mysqli_num_rows($staff_result) > 0) {
-                            while ($staff = mysqli_fetch_assoc($staff_result)) { ?>
+                            $num = 0;
+                            while ($staff = mysqli_fetch_assoc($staff_result)) {
+                                $num++
+                                ?>
                                 <tr>
 
-                                    <td><?php echo $staff['booking_id']; ?></td>
+                                    <td><?php echo $num; ?></td>
                                     <td><?php echo $staff['customer_name']; ?></td>
                                     <td><?php echo $staff['room_no']; ?></td>
                                     <td><?php echo date('M j, Y', strtotime($staff['booking_date'])); ?></td>
@@ -64,7 +67,7 @@
                                     <td><?php echo number_format($staff['discount']); ?></td>
                                     <td><?php echo number_format($staff['total_price']); ?></td>
                                     <td><?php echo number_format($staff['remaining_price']); ?></td>
-                                    <td><?php echo $staff['added_by']; ?></td>
+                                    <td><?php get_user($staff['added_by']); ?></td>
                                     <td>
                                         <!-- <button title="Edit Booking" style="border-radius:60px;" data-toggle="modal"
                                             data-target="#editBooking" data-id="<-?php echo $staff['booking_id']; ?>"
@@ -105,5 +108,15 @@
         <p class="back-link">Developed By Bashir Abdulhakeem</p>
         </div>
     </div>
+     <?php
+        function get_user($vl){
+            global $connection;
+            $query = "SELECT * from user WHERE id = $vl";
+            $result = mysqli_query($connection, $query);
+
+            $itemDetails = mysqli_fetch_assoc($result);
+            echo $itemDetails['name'];
+        };
+    ?>
 
 </div>    <!--/.main-->

@@ -4,7 +4,7 @@
             <li><a href="#">
                     <em class="fa fa-home"></em>
                 </a></li>
-            <li class="active">Laundry Report</li>
+            <li class="active">Kitchen Report</li>
         </ol>
     </div><!--/.row-->
 
@@ -13,11 +13,9 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="panel panel-default">
-                <div class="panel-heading">Laundry Details:
+                <div class="panel-heading">Kitchen Details:
                     <a href="index.php?report" class="btn btn-success pull-right" style="border-radius:0%">Booking Report</a>
-                    <a href="index.php?sales_report" class="btn btn-secondary pull-right" style="border-radius:0%">Sales Report</a>
                     <a href="index.php?complaint_report" class="btn btn-warning pull-right" style="border-radius:0%">Complaint Report</a>
-                    <a href="index.php?gym_report" class="btn btn-danger pull-right" style="border-radius:0%">Gym/Pool Report</a>
                 </div>
                 <div class="panel-body">
                     <?php
@@ -37,33 +35,32 @@
                         <thead>
                         <tr>
                             <th>#</th>
-                            <th>Apparel</th>
-                            <th>Service</th>
-                            <th>Price</th>
-                            <th>Subtotal</th>
+                            <th>Invoice N0.</th>
+                            <th>Customer Name</th>
+                            <th>Total Price</th>
+                            <th>Paid</th>
+                            <th>Room Charged</th>
                             <th>Created Date</th>
-                            <th>Added By</th>
                         </tr>
                         </thead>
                         <tbody>
                         <?php
-                        $complaint_query = "SELECT * FROM laundry_jobs ORDER BY id DESC";
-                        $complaint_result = mysqli_query($connection, $complaint_query);
-                        if (mysqli_num_rows($complaint_result) > 0) {
+                        $invoice_query = "SELECT * FROM kitchen_invoice ORDER BY id desc";
+                        $invoice_result = mysqli_query($connection, $invoice_query);
+                        if (mysqli_num_rows($invoice_result) > 0) {
                             $num = 0;
-                            while ($complaint = mysqli_fetch_assoc($complaint_result)) {
+                            while ($invoice = mysqli_fetch_assoc($invoice_result)) {
                                 $num++
                                 ?>
                                 <tr>
                                     <td><?php echo $num ?></td>
-                                    <td><?php echo get_apparel($complaint['laundry_id']) ?></td>
-                                    <td><?php echo $complaint['service'] ?></td>
-                                    <td><?php echo number_format($complaint['price']) ?></td>
-                                    <td><?php echo number_format($complaint['quantity'] * $complaint['price']) ?></td>
-                                    <td><?php echo date('M j, Y',strtotime($complaint['created_at'])) ?></td>
-                                    <td><?php get_user($complaint['added_by']) ?></td>
-
-
+                                    <td><?php echo sprintf("%06d", $invoice['id']) ?></td>
+                                    <td><?php echo $invoice['customer_id'] ? $invoice['customer_id'] : $invoice['description'] ?></td>
+                                    <td><?php echo number_format($invoice['total_price']) ?></td>
+                                    <td><?php echo number_format($invoice['paid']) ?></td>
+                                    <td><?php echo $invoice['room_id'] ? get_room_name($invoice['room_id']) : "" ?></td>
+                                    <td><?php echo date('M j, Y',strtotime($invoice['created_at'])) ?></td>
+                                    
                                 </tr>
                             <?php }
                         } else {
@@ -85,21 +82,13 @@
     </div>
 
     <?php
-        function get_apparel($vl){
+        function get_room_name($vl){
             global $connection;
-            $query = "SELECT * from laundry WHERE id = $vl";
+            $query = "SELECT * from room WHERE room_id = $vl";
             $result = mysqli_query($connection, $query);
 
             $itemDetails = mysqli_fetch_assoc($result);
-            echo $itemDetails['apparel'];
-        };
-        function get_user($vl){
-            global $connection;
-            $query = "SELECT * from user WHERE id = $vl";
-            $result = mysqli_query($connection, $query);
-
-            $itemDetails = mysqli_fetch_assoc($result);
-            echo $itemDetails['name'];
+            echo $itemDetails['room_no'];
         };
     ?>
 

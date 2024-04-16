@@ -67,7 +67,7 @@
                                     <td><?php echo number_format($staff['discount']); ?></td>
                                     <td><?php echo number_format($staff['total_price']); ?></td>
                                     <td><?php echo number_format($staff['remaining_price']); ?></td>
-                                    <td><?php echo $staff['added_by']; ?></td>
+                                    <td><?php get_user($staff['added_by']); ?></td>
                                     
                                 </tr>
 
@@ -90,5 +90,15 @@
         <p class="back-link">Developed By Bashir Abdulhakeem</p>
         </div>
     </div>
+    <?php
+        function get_user($vl){
+            global $connection;
+            $query = "SELECT * from user WHERE id = $vl";
+            $result = mysqli_query($connection, $query);
+
+            $itemDetails = mysqli_fetch_assoc($result);
+            echo $itemDetails['name'];
+        };
+    ?>
 
 </div>    <!--/.main-->

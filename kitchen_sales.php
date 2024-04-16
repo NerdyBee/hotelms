@@ -148,7 +148,7 @@
                     </table>
                     <div class="panel-body">
                         <div>
-                            <h4 class="">Charge To Room</h4>
+                            <h4 class="">Payment Section</h4>
                         </div>
                         <form role="form" id="bar" data-toggle="validator" method="post" action="ajax.php">    
                             <div class="col-md-12">

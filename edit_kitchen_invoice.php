@@ -1,6 +1,7 @@
 <?php
     if (isset($_GET['invoice']) && $_GET['invoice']>0){
         $inv = $_GET['invoice'];
+        $_SESSION['kitchen_invoice_no'] = $_GET['invoice'];
     }
 ?>
 <div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
@@ -65,7 +66,7 @@
 
                         </div>
 
-                        <button type="submit" class="btn btn-lg btn-success" name="editSales" style="border-radius:0%">Add</button>
+                        <button type="submit" class="btn btn-lg btn-success" name="editKitchenSales" style="border-radius:0%">Add</button>
                         <!-- <button type="reset" class="btn btn-lg btn-danger" style="border-radius:0%">Reset</button> -->
                     </form>
                 </div>
@@ -149,7 +150,7 @@
                     </table>
                     <div class="panel-body">
                         <div>
-                            <h4 class="">Charge To Room</h4>
+                            <h4 class="">Payment Section</h4>
                         </div>
                         <form role="form" id="kitchen" data-toggle="validator" method="post" action="ajax.php">    
                             <div class="col-md-12">

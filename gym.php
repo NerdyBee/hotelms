@@ -53,6 +53,23 @@
                                 <div class="help-block with-errors"></div>
                             </div>
 
+                            <div class="form-group col-lg-6">
+                                <label>Payment Type</label>
+                                <select class="form-control" name="payment_type" id="payment_type" required
+                                        data-error="Select Payment Type">
+                                    <option selected disabled>Select Payment Type</option>
+                                    <?php
+                                    $query = "SELECT * FROM payment_type";
+                                    $result = mysqli_query($connection, $query);
+                                    if (mysqli_num_rows($result) > 0) {
+                                        while ($payment_type = mysqli_fetch_assoc($result)) {
+                                            echo '<option value="' . $payment_type['payment_type'] . '">' . $payment_type['payment_type'] . '</option>';
+                                        }
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+
                             <!-- <div class="form-group col-lg-12">
                                 <label>Please Describe Your Complaints</label>
                                 <textarea class="form-control" name="complaint" placeholder="Complaint" required></textarea>
@@ -92,6 +109,7 @@
                             <th>Service</th>
                             <th>Description</th>
                             <th>Amount</th>
+                            <th>Added By</th>
                             <th>Action</th>
                         </tr>
                         </thead>
@@ -109,6 +127,7 @@
                                     <td><?php echo $laundry['service'] ?></td>
                                     <td><?php echo $laundry['description'] ?></td>
                                     <td><?php echo number_format($laundry['amount']) ?></td>
+                                    <td><?php get_user($laundry['added_by']); ?></td>
                                     <td>
                                         <button title="Edit Gym" style="border-radius:60px;" data-toggle="modal"
                                                 data-target="#editGym" data-id="<?php echo $laundry['id']; ?>"
@@ -183,5 +202,15 @@
         <p class="back-link">Developed By Bashir Abdulhakeem</p>
         </div>
     </div>
+     <?php
+        function get_user($vl){
+            global $connection;
+            $query = "SELECT * from user WHERE id = $vl";
+            $result = mysqli_query($connection, $query);
+
+            $itemDetails = mysqli_fetch_assoc($result);
+            echo $itemDetails['name'];
+        };
+    ?>
 
 </div>    <!--/.main-->

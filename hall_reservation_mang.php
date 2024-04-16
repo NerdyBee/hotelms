@@ -48,14 +48,17 @@
                         </thead>
                         <tbody>
                         <?php
-                        $staff_query = "SELECT * FROM hall_booking NATURAL JOIN hall_customer NATURAL JOIN halls";
+                        $staff_query = "SELECT * FROM hall_booking NATURAL JOIN hall_customer NATURAL JOIN halls ORDER BY booking_id DESC";
                         $staff_result = mysqli_query($connection, $staff_query);
 
                         if (mysqli_num_rows($staff_result) > 0) {
-                            while ($staff = mysqli_fetch_assoc($staff_result)) { ?>
+                            $num = 0;
+                            while ($staff = mysqli_fetch_assoc($staff_result)) {
+                                $num++
+                                ?>
                                 <tr>
 
-                                    <td><?php echo $staff['booking_id']; ?></td>
+                                    <td><?php echo $num ?></td>
                                     <td><?php echo $staff['customer_name']; ?></td>
                                     <td><?php echo $staff['contact_no']; ?></td>
                                     <td><?php echo $staff['hall']; ?></td>
@@ -65,7 +68,7 @@
                                     <td><?php echo number_format($staff['discount']); ?></td>
                                     <td><?php echo number_format($staff['total_price']); ?></td>
                                     <td><?php echo number_format($staff['remaining_price']); ?></td>
-                                    <td><?php echo $staff['added_by']; ?></td>
+                                    <td><?php get_user($staff['added_by']); ?></td>
                                     <td>
                                         <button title="Pay For Hall" style="border-radius:60px;" data-toggle="modal"
                                             data-target="#hallPaymentModal" data-id="<?php echo $staff['booking_id']; ?>"
@@ -162,7 +165,7 @@
                                         ?>
                                     </select>
                                 </div>
-                                <input type="text" id="getBookingId_h" value="">
+                                <input type="hidden" id="getBookingId_h">
                                 <button type="submit" class="btn btn-primary pull-right">Proceed Payment</button>
                             </form>
                         </div>
@@ -178,5 +181,15 @@
         <p class="back-link">Developed By Bashir Abdulhakeem</p>
         </div>
     </div>
+    <?php
+        function get_user($vl){
+            global $connection;
+            $query = "SELECT * from user WHERE id = $vl";
+            $result = mysqli_query($connection, $query);
+
+            $itemDetails = mysqli_fetch_assoc($result);
+            echo $itemDetails['name'];
+        };
+    ?>
 
 </div>    <!--/.main-->

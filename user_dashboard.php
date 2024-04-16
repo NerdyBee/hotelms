@@ -24,8 +24,9 @@
 			<hr>
 
 			<div class="row">
-				<div class="col-xs-6 col-md-2 col-lg-2 no-padding">
-					
+				<div class="col-xs-6 col-md-2 col-lg-2">
+					<!-- <button type="button" class="btn btn-primary">Backup</button> -->
+					<a href="backup_db.php" title="DB Backup" type="button" class="btn btn-primary btn-toastr" data-context="info" data-message="DB Backup" data-position="top-right">Backup Database</a>
 				</div>
 			</div><!--/.row-->
 		</div>

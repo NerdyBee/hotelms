@@ -3,6 +3,7 @@ include_once "db.php";
 session_start();
 if (isset($_SESSION['user_id'], $_SESSION['user_privilege'])){
     $user_id = $_SESSION['user_id'];
+    $user_privilege = $_SESSION['user_privilege'];
     $userQuery = "SELECT * FROM user NATURAL JOIN privileges WHERE id = '$user_id'";
     $result = mysqli_query($connection, $userQuery);
     $user = mysqli_fetch_assoc($result);
@@ -16,9 +17,12 @@ include_once "sidebar.php";
 if (isset($_GET['room_mang'])){
     include_once "room_mang.php";
 }
-// elseif (isset($_GET['dashboard'])){
-//     include_once "dashboard.php";
-// }
+elseif (isset($_GET['dashboard']) && in_array($user_privilege, array(1, 2, 3, 7, 8))){
+    include_once "report_dashboard.php";
+}
+elseif (isset($_GET['dashboard']) && !in_array($user_privilege, array(1, 2, 3, 7, 8))){
+    include_once "dashboard.php";
+}
 elseif (isset($_GET['reservation_mang'])){
     include_once "reservation_mang.php";
 }
@@ -130,7 +134,7 @@ elseif (isset($_GET['add_user'])){
 elseif (isset($_GET['room_mang'])){
     include_once "room_mang.php";
 }
-else{
+else {
     include_once "user_dashboard.php";
 }
 

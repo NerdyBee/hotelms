@@ -2,6 +2,15 @@
 include_once 'db.php';
 session_start();
 
+function get_user($vl){
+    global $connection;
+    $query = "SELECT * from user WHERE id = $vl";
+    $result = mysqli_query($connection, $query);
+
+    $itemDetails = mysqli_fetch_assoc($result);
+    echo $itemDetails['name'];
+};
+
 if (isset($_POST['login'])) {
     $email = $_POST['email'];
     $password = $_POST['password'];
@@ -9,8 +18,10 @@ if (isset($_POST['login'])) {
     if (!$email && !$password) {
         header('Location:login.php?empty');
     } else {
-        $password = md5($password);
-        $query = "SELECT * FROM user WHERE username = '$email' OR email='$email' AND password='$password'";
+        $pword = md5($password);
+        // $query = "SELECT * FROM user WHERE username = '$email' OR email ='$email' AND password = '$pword'";
+        $query = "SELECT * FROM user WHERE (username = '$email' OR email ='$email') AND password = '$pword'";
+
         $result = mysqli_query($connection, $query);
         if (mysqli_num_rows($result) == 1) {
             $user = mysqli_fetch_assoc($result);
@@ -23,6 +34,96 @@ if (isset($_POST['login'])) {
         }
     }
 }
+
+// if (isset($_POST['login'])) {
+//     // Include database connection file and session start
+//     require_once('db_connection.php');
+//     session_start();
+
+//     // Sanitize input data
+//     $email = mysqli_real_escape_string($connection, $_POST['email']);
+//     $password = mysqli_real_escape_string($connection, $_POST['password']);
+
+//     // Validate input
+//     if (empty($email) || empty($password)) {
+//         header('Location: login.php?empty');
+//         exit();
+//     }
+
+//     // Hash the password securely
+//     $password = password_hash($password, PASSWORD_DEFAULT);
+
+//     // Prepare and execute the SQL query with a prepared statement
+//     $query = "SELECT id, username, privilege_id, password FROM user WHERE username = ? OR email = ?";
+//     $stmt = mysqli_prepare($connection, $query);
+//     mysqli_stmt_bind_param($stmt, "ss", $email, $email);
+//     mysqli_stmt_execute($stmt);
+//     $result = mysqli_stmt_get_result($stmt);
+
+//     if ($result && $user = mysqli_fetch_assoc($result)) {
+//         // Verify password
+//         if (password_verify($_POST['password'], $user['password'])) {
+//             // Password is correct, set session variables and redirect to dashboard
+//             $_SESSION['username'] = $user['username'];
+//             $_SESSION['user_id'] = $user['id'];
+//             $_SESSION['user_privilege'] = $user['privilege_id'];
+//             header('Location: index.php?dashboard');
+//             exit();
+//         } else {
+//             // Password is incorrect
+//             header('Location: login.php?loginE');
+//             exit();
+//         }
+//     } else {
+//         // User not found
+//         header('Location: login.php?loginE');
+//         exit();
+//     }
+// } else {
+//     // Redirect if login form is not submitted
+//     header('Location: login.php');
+//     exit();
+// }
+
+// if (isset($_POST['add_user'])) {
+//     // Include database connection file
+//     require_once('db_connection.php');
+
+//     // Sanitize input data
+//     $privilege_id = mysqli_real_escape_string($connection, $_POST['privilege_id']);
+//     $name = mysqli_real_escape_string($connection, $_POST['name']);
+//     $username = mysqli_real_escape_string($connection, $_POST['username']);
+//     $email = mysqli_real_escape_string($connection, $_POST['email']);
+//     $password = mysqli_real_escape_string($connection, $_POST['password']);
+//     $added_by = $_SESSION['user_id'];
+
+//     // Validate input
+//     if (empty($privilege_id) || empty($name) || empty($username) || empty($email) || empty($password)) {
+//         $response['done'] = false;
+//         $response['data'] = "Please Enter All Required Fields";
+//         echo json_encode($response);
+//         exit();
+//     }
+
+//     // Hash the password securely
+//     $password = password_hash($password, PASSWORD_DEFAULT);
+
+//     // Insert user into the database
+//     $query = "INSERT INTO user (privilege_id, name, username, email, password, added_by) VALUES (?, ?, ?, ?, ?, ?)";
+//     $stmt = mysqli_prepare($connection, $query);
+//     mysqli_stmt_bind_param($stmt, "issssi", $privilege_id, $name, $username, $email, $password, $added_by);
+//     if (mysqli_stmt_execute($stmt)) {
+//         $response['done'] = true;
+//         $response['data'] = 'User Successfully Added';
+//         echo json_encode($response);
+//         exit();
+//     } else {
+//         $response['done'] = false;
+//         $response['data'] = "Database Error in Adding User";
+//         echo json_encode($response);
+//         exit();
+//     }
+// }
 
 if (isset($_POST['add_hall'])) {
     $hall = $_POST['hall'];
@@ -762,10 +863,10 @@ if (isset($_POST['booked_hall'])) {
     $hall_id = $_POST['hall_id'];
 
     // $sql = "SELECT * FROM room NATURAL JOIN room_type NATURAL JOIN booking NATURAL JOIN customer WHERE room_id = '$room_id'";
-    $sql = "SELECT * FROM halls 
-        JOIN hall_booking ON halls.hall_id = hall_booking.hall_id 
+    $sql = "SELECT * FROM hall_booking 
+        JOIN halls ON halls.hall_id = hall_booking.hall_id 
         JOIN hall_customer ON hall_booking.customer_id = hall_customer.customer_id 
-        WHERE halls.hall_id = '$hall_id'";
+        WHERE hall_booking.booking_id = '$hall_id'";
 
     $result = mysqli_query($connection, $sql);
     if ($result) {
@@ -1096,9 +1197,10 @@ if (isset($_POST['createGym'])) {
     $service = $_POST['service'];
     $description = $_POST['description'];
     $amount = $_POST['amount'];
+    $payment_type = $_POST['payment_type'];
     $added_by = $_SESSION['user_id'];
 
-    $query = "INSERT INTO gym_pool (service,description,amount,added_by) VALUES ('$service','$description','$amount','$added_by')";
+    $query = "INSERT INTO gym_pool (service,description,amount,payment_type,added_by) VALUES ('$service','$description','$amount','$payment_type','$added_by')";
     $result = mysqli_query($connection, $query);
     $inv_id = mysqli_insert_id($connection);
     if ($result) {
@@ -1193,9 +1295,9 @@ if(isset($_POST['saveKitchenInvoice'])) {
     }
 
     if ($result) {
-        header("Location:index.php?bar");
+        header("Location:index.php?kitchen");
     } else {
-        header("Location:index.php?sales&error&" . mysqli_error($connection));
+        header("Location:index.php?kitchen_sales&error&" . mysqli_error($connection));
     }
 }
 
@@ -1320,6 +1422,31 @@ if (isset($_POST['editSales'])) {
         }
     } else {
         header("Location:index.php?sales&errorItem");
+    }
+
+}
+
+if (isset($_POST['editKitchenSales'])) {
+    $item = $_POST['item'];
+    $inv = $_POST['invoice_no'];
+    $quantity = $_POST['quantity'];
+    $added_by = $_SESSION['user_id'];
+
+    $query1 = "SELECT * FROM menu WHERE item_id = $item";
+    $result1 = mysqli_query($connection, $query1);
+    $item_details = mysqli_fetch_assoc($result1);
+    $price = $item_details['price'];
+    if ($result1){
+        $sub_total = $price * $quantity;
+        $query = "INSERT INTO kitchen_sales (invoice_id,item_id,price,quantity,sub_total,added_by) VALUES ('$inv','$item','$price','$quantity','$sub_total','$added_by')";
+        $result = mysqli_query($connection, $query);
+        if ($result) {
+            header("Location:index.php?kitchen_sales");
+        } else {
+            header("Location:index.php?kitchen_sales&error");
+        }
+    } else {
+        header("Location:index.php?kitchen_sales&errorItem");
     }
 
 }

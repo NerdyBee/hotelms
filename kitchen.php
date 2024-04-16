@@ -70,6 +70,7 @@
                             <th>Payment Type</th>
                             <th>Room Charged</th>
                             <th>Created Date</th>
+                            <th>Added By</th>
                             <th>Action</th>
                         </tr>
                         </thead>
@@ -91,6 +92,7 @@
                                     <td><?php echo $invoice['payment_type'] ?></td>
                                     <td><?php echo $invoice['room_id'] ? get_room_name($invoice['room_id']) : "" ?></td>
                                     <td><?php echo date('M j, Y',strtotime($invoice['created_at'])) ?></td>
+                                    <td><?php get_user($invoice['added_by']); ?></td>
                                     <td>
                                         <a title="Edit Invoice" href="index.php?editKitchenInvoice&invoice=<?php echo $invoice['id']; ?>"
                                            class="btn btn-info" style="border-radius:60px;"><i
@@ -214,6 +216,14 @@
 
             $itemDetails = mysqli_fetch_assoc($result);
             echo $itemDetails['room_no'];
+        };
+        function get_user($vl){
+            global $connection;
+            $query = "SELECT * from user WHERE id = $vl";
+            $result = mysqli_query($connection, $query);
+
+            $itemDetails = mysqli_fetch_assoc($result);
+            echo $itemDetails['name'];
         };
     ?>
 

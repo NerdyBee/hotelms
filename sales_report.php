@@ -4,7 +4,7 @@
             <li><a href="#">
                     <em class="fa fa-home"></em>
                 </a></li>
-            <li class="active">Bar/Kitchen Report</li>
+            <li class="active">Bar Report</li>
         </ol>
     </div><!--/.row-->
 
@@ -13,7 +13,7 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="panel panel-default">
-                <div class="panel-heading">Bar/Kitchen Details:
+                <div class="panel-heading">Bar Details:
                     <a href="index.php?report" class="btn btn-success pull-right" style="border-radius:0%">Booking Report</a>
                     <a href="index.php?complaint_report" class="btn btn-warning pull-right" style="border-radius:0%">Complaint Report</a>
                 </div>

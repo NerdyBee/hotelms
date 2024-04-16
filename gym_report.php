@@ -59,7 +59,7 @@
                                     <td><?php echo $complaint['description'] ?></td>
                                     <td><?php echo number_format($complaint['amount']) ?></td>
                                     <td><?php echo date('M j, Y',strtotime($complaint['created_at'])) ?></td>
-                                    <td><?php echo $complaint['added_by'] ?></td>
+                                    <td><?php get_user($complaint['added_by']) ?></td>
 
 
                                 </tr>
@@ -90,6 +90,14 @@
 
             $itemDetails = mysqli_fetch_assoc($result);
             echo $itemDetails['room_no'];
+        };
+        function get_user($vl){
+            global $connection;
+            $query = "SELECT * from user WHERE id = $vl";
+            $result = mysqli_query($connection, $query);
+
+            $itemDetails = mysqli_fetch_assoc($result);
+            echo $itemDetails['name'];
         };
     ?>
 
