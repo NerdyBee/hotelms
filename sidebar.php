@@ -157,13 +157,13 @@
         if(in_array($_SESSION['user_privilege'], $bar)) {
             if (isset($_GET['bar'])){ ?>
                 <li class="active">
-                    <a href="index.php?bar"><em class="fa fa-cutlery">&nbsp;</em>
+                    <a href="index.php?bar"><em class="fa fa-beer">&nbsp;</em>
                         Bar
                     </a>
                 </li>
             <?php } else{?>
                 <li>
-                <a href="index.php?bar"><em class="fa fa-cutlery">&nbsp;</em>
+                <a href="index.php?bar"><em class="fa fa-beer">&nbsp;</em>
                         Bar
                     </a>
                 </li>
@@ -243,6 +243,19 @@
                     </a>
                 </li>
             <?php }
+            if (isset($_GET['expenses'])){ ?>
+                <li class="active">
+                    <a href="index.php?expenses"><em class="fa fa-shopping-cart">&nbsp;</em>
+                        Expenses
+                    </a>
+                </li>
+            <?php } else{?>
+                <li>
+                    <a href="index.php?expenses"><em class="fa fa-shopping-cart">&nbsp;</em>
+                        Expenses
+                    </a>
+                </li>
+            <?php }
             if (isset($_GET['menu'])){ ?>
                 <li class="active">
                     <a href="index.php?menu"><em class="fa fa-shopping-basket">&nbsp;</em>
@@ -266,6 +279,19 @@
                 <li>
                     <a href="index.php?supply"><em class="fa fa-shopping-basket">&nbsp;</em>
                         Supply
+                    </a>
+                </li>
+            <?php }
+            if (isset($_GET['store'])){ ?>
+                <li class="active">
+                    <a href="index.php?store"><em class="fa fa-save">&nbsp;</em>
+                        Store
+                    </a>
+                </li>
+            <?php } else{?>
+                <li>
+                    <a href="index.php?store"><em class="fa fa-save">&nbsp;</em>
+                        Store
                     </a>
                 </li>
             <?php }

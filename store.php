@@ -4,7 +4,7 @@
             <li><a href="#">
                     <em class="fa fa-home"></em>
                 </a></li>
-            <li class="active">Supply</li>
+            <li class="active">Store</li>
         </ol>
     </div><!--/.row-->
 
@@ -13,17 +13,17 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="panel panel-default">
-                <div class="panel-heading">Add to Store</div>
+                <div class="panel-heading">Supply Bar</div>
                 <div class="panel-body">
                     <?php
                     if (isset($_GET['error'])) {
                         echo "<div class='alert alert-danger'>
-                                <span class='glyphicon glyphicon-info-sign'></span> &nbsp; Error on Store Supply !
+                                <span class='glyphicon glyphicon-info-sign'></span> &nbsp; Error on Sales !
                             </div>";
                     }
                     if (isset($_GET['success'])) {
                         echo "<div class='alert alert-success'>
-                                <span class='glyphicon glyphicon-info-sign'></span> &nbsp; Store Supply Successfully Added !
+                                <span class='glyphicon glyphicon-info-sign'></span> &nbsp; Sales Successfully Added !
                             </div>";
                     }
                     if (isset($_GET['delete_success'])) {
@@ -59,7 +59,7 @@
 
                         </div>
 
-                        <button type="submit" class="btn btn-lg btn-success" name="addSupply" style="border-radius:0%">Add</button>
+                        <button type="submit" class="btn btn-lg btn-success" name="addStore" style="border-radius:0%">Add</button>
                         <!-- <button type="reset" class="btn btn-lg btn-danger" style="border-radius:0%">Reset</button> -->
                     </form>
                 </div>
@@ -104,21 +104,21 @@
                             
                             <?php
                                 $tot = 0;
-                                $supply_query = "SELECT * FROM supply";
-                                $supply_result = mysqli_query($connection, $supply_query);
-                                if (mysqli_num_rows($supply_result) > 0) {
+                                $store_query = "SELECT * FROM store";
+                                $store_result = mysqli_query($connection, $store_query);
+                                if (mysqli_num_rows($store_result) > 0) {
                                     $num = 0;
-                                    while ($supply = mysqli_fetch_assoc($supply_result)) {
+                                    while ($store = mysqli_fetch_assoc($store_result)) {
                                         $num++;
-                                        // $tot += $supply['price'] * $supply['quantity'];
+                                        // $tot += $store['price'] * $store['quantity'];
                                         ?>
                                         <tr>
                                             <td><?php echo $num ?></td>
-                                            <td><?php get_item_name($supply['item_id']) ?></td>
-                                            <td><?php echo $supply['quantity'] ?></td>
-                                            <td><?php echo $supply['created_at'] ?></td>
+                                            <td><?php get_item_name($store['item_id']) ?></td>
+                                            <td><?php echo $store['quantity'] ?></td>
+                                            <td><?php echo $store['created_at'] ?></td>
                                             <td>
-                                                <a href="ajax.php?delete_invoice_item=<?php echo $supply['supply_id']; ?>"
+                                                <a href="ajax.php?delete_invoice_item=<?php echo $store['store_id']; ?>"
                                                     class="btn btn-danger" style="border-radius:60px;" onclick="return confirm('Are you Sure?')"><i
                                                                 class="fa fa-trash" alt="delete"></i></a>
                                             </td>
@@ -186,6 +186,37 @@
 
             $itemDetails = mysqli_fetch_assoc($result);
             echo $itemDetails['item'];
+        };
+
+        function get_stok($vl){
+            global $connection;
+            $query_supply = "SELECT sum(quantity) AS s_supply FROM supply WHERE item_id = $vl";
+            $query_store = "SELECT sum(quantity) AS s_store FROM store WHERE item_id = $vl";
+            $query_sales = "SELECT sum(quantity) AS s_sales FROM sales WHERE item_id = $vl";
+            $result_supply = mysqli_query($connection, $query_supply);
+            $result_store = mysqli_query($connection, $query_store);
+            $result_sales = mysqli_query($connection, $query_sales);
+
+            if($result_supply) {
+                $sum_supply = mysqli_fetch_assoc($result_supply);
+                $sup = $sum_supply['s_supply'];
+            } else {
+                $sup = 0;
+            }
+            if($result_store) {
+                $sum_store = mysqli_fetch_assoc($result_store);
+                $store = $sum_store['s_store'];
+            } else {
+                $store = 0;
+            }
+            if($result_sales) {
+                $sum_sales = mysqli_fetch_assoc($result_sales);
+                $sal = $sum_sales['s_sales'];
+            } else {
+                $sal = 0;
+            }
+            echo $sup - $sal;
+            // echo $sal;
         };
     ?>
 

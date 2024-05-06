@@ -137,9 +137,9 @@
                                         }
                                         ?>
 
-                                        <a href="ajax.php?delete_room=<?php echo $rooms['room_id']; ?>"
+                                        <!--a href="ajax.php?delete_room=<-?php echo $rooms['room_id']; ?>"
                                            class="btn btn-danger" style="border-radius:60px;" onclick="return confirm('Are you Sure?')"><i
-                                                    class="fa fa-trash" alt="delete"></i></a>
+                                                    class="fa fa-trash" alt="delete"></i></a-->
                                     </td>
                                 </tr>
                             <?php }

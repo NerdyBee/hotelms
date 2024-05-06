@@ -44,7 +44,7 @@
                                 <select class="form-control" id="item" name="item" required data-error="Select Item">
                                     <option selected disabled>Select Item</option>
                                     <?php
-                                    $query  = "SELECT * FROM inventory";
+                                    $query  = "SELECT * FROM inventory ORDER BY item";
                                     $result = mysqli_query($connection,$query);
                                     if (mysqli_num_rows($result) > 0){
                                         while ($item = mysqli_fetch_assoc($result)){

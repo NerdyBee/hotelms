@@ -1193,6 +1193,22 @@ if (isset($_POST['add_user'])) {
     echo json_encode($response);
 }
 
+if (isset($_POST['createExpenses'])) {
+    $description = $_POST['description'];
+    $amount = $_POST['amount'];
+    $added_by = $_SESSION['user_id'];
+
+    $query = "INSERT INTO expenses (description,amount,added_by) VALUES ('$description','$amount','$added_by')";
+    $result = mysqli_query($connection, $query);
+    $inv_id = mysqli_insert_id($connection);
+    if ($result) {
+        header("Location:index.php?expenses");
+    } else {
+        header("Location:index.php?expenses&error");
+    }
+
+}
+
 if (isset($_POST['createGym'])) {
     $service = $_POST['service'];
     $description = $_POST['description'];
@@ -1574,6 +1590,62 @@ if (isset($_POST['createMenu'])) {
     }
 }
 
+if (isset($_POST['expenses_edit'])) {
+    $expenses_id = $_POST['expenses_id'];
+
+    $sql = "SELECT * FROM expenses WHERE id = '$expenses_id'";
+    $result = mysqli_query($connection, $sql);
+    if ($result) {
+        $expenses = mysqli_fetch_assoc($result);
+        $response['done'] = true;
+        $response['description'] = $expenses['description'];
+        $response['amount'] = $expenses['amount'];
+        $response['id'] = $expenses['id'];
+    } else {
+        $response['done'] = false;
+        $response['data'] = "DataBase Error right here!";
+    }
+
+    echo json_encode($response);
+}
+
+if (isset($_POST['edit_expenses'])) {
+    $description = $_POST['description'];
+    $amount = $_POST['amount'];
+    $expenses_id = $_POST['expenses_id'];
+
+    if ($description != '' && isset($amount) && $amount != '') {
+        $query = "UPDATE expenses SET description = '$description',amount = '$amount' where id = '$expenses_id'";
+        $result = mysqli_query($connection, $query);
+
+        if ($result) {
+            $response['done'] = true;
+            $response['data'] = 'Successfully Edit Expenses';
+        } else {
+            $response['done'] = false;
+            $response['data'] = "DataBase Error";
+        }
+
+    } else {
+
+        $response['done'] = false;
+        $response['data'] = "Please Enter Description and Amount";
+    }
+
+    echo json_encode($response);
+}
+
+if (isset($_GET['delete_expenses'])) {
+    $exp_id = $_GET['delete_expenses'];
+    $sql = "DELETE FROM expenses WHERE id = $exp_id";
+    $result = mysqli_query($connection, $sql);
+    if ($result) {
+        header("Location:index.php?expenses&delete_success");
+    } else {
+        header("Location:index.php?expenses&error");
+    }
+}
+
 if (isset($_POST['gym_edit'])) {
     $gym_id = $_POST['gym_id'];
 
@@ -1672,6 +1744,21 @@ if (isset($_POST['addSupply'])) {
         header("Location:index.php?supply&success");
     } else {
         header("Location:index.php?supply&error");
+    }
+
+}
+
+if (isset($_POST['addStore'])) {
+    $item = $_POST['item'];
+    $quantity = $_POST['quantity'];
+    $added_by = $_SESSION['user_id'];
+
+    $query = "INSERT INTO store (item_id,quantity,added_by) VALUES ('$item','$quantity','$added_by')";
+    $result = mysqli_query($connection, $query);
+    if ($result) {
+        header("Location:index.php?store&success");
+    } else {
+        header("Location:index.php?store&error");
     }
 
 }

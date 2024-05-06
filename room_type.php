@@ -46,7 +46,7 @@
                         </thead>
                         <tbody>
                         <?php
-                        $room_query = "SELECT * FROM room_type WHERE deleteStatus != 1";
+                        $room_query = "SELECT * FROM room_type WHERE deleteStatus != 1 ORDER BY room_type_id";
                         $rooms_result = mysqli_query($connection, $room_query);
                         if (mysqli_num_rows($rooms_result) > 0) {
                             while ($rooms = mysqli_fetch_assoc($rooms_result)) { ?>

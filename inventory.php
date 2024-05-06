@@ -79,7 +79,8 @@
                             <th>#</th>
                             <th>Item Name</th>
                             <th>Price</th>
-                            <th>Stock</th>
+                            <th>Store Stock</th>
+                            <th>Bar Stock</th>
                             <th>Action</th>
                         </tr>
                         </thead>
@@ -96,6 +97,7 @@
                                     <td><?php echo $num ?></td>
                                     <td><?php echo $inventory['item'] ?></td>
                                     <td><?php echo number_format($inventory['price']) ?></td>
+                                    <td><?php echo get_store_stok($inventory['item_id']) ?></td>
                                     <td><?php echo get_stok($inventory['item_id']) ?></td>
                                     <td>
                                         <button title="Edit Item" style="border-radius:60px;" data-toggle="modal"
@@ -201,16 +203,16 @@
 
         function get_stok($vl){
             global $connection;
-            $query_supply = "SELECT sum(quantity) AS s_supply FROM supply WHERE item_id = $vl";
+            $query_store = "SELECT sum(quantity) AS s_store FROM store WHERE item_id = $vl";
             $query_sales = "SELECT sum(quantity) AS s_sales FROM sales WHERE item_id = $vl";
-            $result_supply = mysqli_query($connection, $query_supply);
+            $result_store = mysqli_query($connection, $query_store);
             $result_sales = mysqli_query($connection, $query_sales);
 
-            if($result_supply) {
-                $sum_supply = mysqli_fetch_assoc($result_supply);
-                $sup = $sum_supply['s_supply'];
+            if($result_store) {
+                $sum_store = mysqli_fetch_assoc($result_store);
+                $store = $sum_store['s_store'];
             } else {
-                $sup = 0;
+                $store = 0;
             }
             if($result_sales) {
                 $sum_sales = mysqli_fetch_assoc($result_sales);
@@ -218,7 +220,30 @@
             } else {
                 $sal = 0;
             }
-            echo $sup - $sal;
+            echo $store - $sal;
+            // echo $sal;
+        };
+
+        function get_store_stok($vl){
+            global $connection;
+            $query_supply = "SELECT sum(quantity) AS s_supply FROM supply WHERE item_id = $vl";
+            $query_store = "SELECT sum(quantity) AS s_store FROM store WHERE item_id = $vl";
+            $result_supply = mysqli_query($connection, $query_supply);
+            $result_store = mysqli_query($connection, $query_store);
+
+            if($result_supply) {
+                $sum_supply = mysqli_fetch_assoc($result_supply);
+                $sup = $sum_supply['s_supply'];
+            } else {
+                $sup = 0;
+            }
+            if($result_store) {
+                $sum_store = mysqli_fetch_assoc($result_store);
+                $store = $sum_store['s_store'];
+            } else {
+                $store = 0;
+            }
+            echo $sup - $store;
             // echo $sal;
         };
     ?>

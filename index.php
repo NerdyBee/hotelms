@@ -83,11 +83,17 @@ elseif (isset($_GET['editKitchenInvoice'])){
 elseif (isset($_GET['supply'])){
     include_once "supply.php";
 }
+elseif (isset($_GET['store'])){
+    include_once "store.php";
+}
 elseif (isset($_GET['editInvoice'])){
     include_once "edit_invoice.php";
 }
 elseif (isset($_GET['inventory'])){
     include_once "inventory.php";
+}
+elseif (isset($_GET['expenses'])){
+    include_once "expenses.php";
 }
 elseif (isset($_GET['menu'])){
     include_once "menu.php";

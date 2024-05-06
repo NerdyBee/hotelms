@@ -421,6 +421,69 @@ $(document).on("click", "#gymEdit", function (e) {
   });
 });
 
+$("#expensesEditFrom").submit(function () {
+  var description = $("#edit_description").val();
+  var amount = $("#edit_amount").val();
+  var expenses_id = $("#edit_id").val();
+
+  $.ajax({
+    type: "post",
+    url: "ajax.php",
+    dataType: "JSON",
+    data: {
+      expenses_id: expenses_id,
+      description: description,
+      amount: amount,
+      edit_expenses: "",
+    },
+    success: function (response) {
+      if (response.done == true) {
+        $("#editExpenses").modal("hide");
+        window.location.href = "index.php?expenses";
+      } else {
+        $(".response").html(
+          '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>' +
+            response.data +
+            "</div>"
+        );
+      }
+    },
+  });
+
+  return false;
+});
+
+$(document).on("click", "#expensesEdit", function (e) {
+  e.preventDefault();
+
+  var expenses_id = $(this).data("id");
+
+  console.log(expenses_id);
+
+  $.ajax({
+    type: "post",
+    url: "ajax.php",
+    dataType: "JSON",
+    data: {
+      expenses_id: expenses_id,
+      expenses_edit: "",
+    },
+    success: function (response) {
+      if (response.done == true) {
+        $("#edit_description").val(response.description);
+        $("#edit_amount").val(response.amount);
+        $("#edit_id").val(response.id);
+      } else {
+        $(".edit_response").html(
+          '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>' +
+            response.data +
+            "</div>"
+        );
+      }
+    },
+  });
+});
+
 $(document).on("click", "#laundryEdit", function (e) {
   e.preventDefault();
 
