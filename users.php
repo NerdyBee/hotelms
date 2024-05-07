@@ -20,12 +20,12 @@
                     <?php
                     if (isset($_GET['error'])) {
                         echo "<div class='alert alert-danger'>
-                                <span class='glyphicon glyphicon-info-sign'></span> &nbsp; Error on Shift Change !
+                                <span class='glyphicon glyphicon-info-sign'></span> &nbsp; Error on User Change !
                             </div>";
                     }
-                    if (isset($_GET['success'])) {
+                    if (isset($_GET['updated'])) {
                         echo "<div class='alert alert-success'>
-                                <span class='glyphicon glyphicon-info-sign'></span> &nbsp; Shift Successfully Changed!
+                                <span class='glyphicon glyphicon-info-sign'></span> &nbsp; User Successfully Changed!
                             </div>";
                     }
                     ?>
@@ -59,18 +59,22 @@
                                     <td><?php echo $staff['email']; ?></td>
                                     <td><?php echo $staff['privilege']; ?></td>
                                     <td><?php echo date('M j, Y', strtotime($staff['created_at'])); ?></td>
-                                    <td><?php echo $staff['added_by']; ?></td>
+                                    <td><?php get_user($staff['added_by']); ?></td>
                                     <td>
 
                                         <button data-toggle="modal"
-                                                data-target="#empDetail<?php echo $staff['id']; ?>"
-                                                data-id="<?php echo $staff['id']; ?>" id="editEmp"
+                                                data-target="#userDetail<?php echo $staff['id']; ?>"
+                                                data-id="<?php echo $staff['id']; ?>" id="editUser"
                                                 class="btn btn-info" style="border-radius:60px;"><i class="fa fa-pencil"></i></button>
-                                        <a href='functionmis.php?empid=<?php echo $staff['id']; ?>'
-                                           class="btn btn-danger" onclick="return confirm('Are you Sure?')" style="border-radius:60px;"><i
-                                                    class="fa fa-trash"></i></a>
-                                        <a href='index.php?emp_history&empid=<?php echo $staff['id']; ?>'
-                                           class="btn btn-success" title="Employee Histery" style="border-radius:60px;"><i class="fa fa-eye"></i></a>
+                                        <?php if($staff['status'] == 1){ ?>
+                                            <a href='functionmis.php?userid=<?php echo $staff['id']; ?>'
+                                            class="btn btn-danger" onclick="return confirm('Are you Sure yuo want to deactivate user?')" style="border-radius:60px;"><i
+                                                        class="fa fa-trash"></i></a>
+                                        <?php } else { ?>
+                                            <a href='functionmis.php?restore=<?php echo $staff['id']; ?>'
+                                            class="btn btn-warning" onclick="return confirm('Are you Sure you want to activate user?')" style="border-radius:60px;"><i
+                                                        class="fa fa-window-restore"></i></a>
+                                        <?php } ?>
                                     </td>
                                 </tr>
 
@@ -98,144 +102,96 @@
 
 <?php
 //$staff_query = "SELECT * FROM staff  JOIN staff_type JOIN shift ON staff.staff_type_id =staff_type.staff_type_id ON shift.";
-$staff_query = "SELECT * FROM staff  NATURAL JOIN staff_type NATURAL JOIN shift";
+$staff_query = "SELECT * FROM user";
 $staff_result = mysqli_query($connection, $staff_query);
 
 if (mysqli_num_rows($staff_result) > 0) {
     while ($staffGlobal = mysqli_fetch_assoc($staff_result)) {
-        $fullname = explode(" ", $staffGlobal['emp_name']);
+        $fullname = explode(" ", $staffGlobal['name']);
         ?>
 
         <!-- Employee Detail-->
-        <div id="empDetail<?php echo $staffGlobal['emp_id']; ?>" class="modal fade" role="dialog">
+        <div id="userDetail<?php echo $staffGlobal['id']; ?>" class="modal fade" role="dialog">
             <div class="modal-dialog">
 
                 <!-- Modal content-->
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Employee Detail</h4>
+                        <h4 class="modal-title">User Detail</h4>
                     </div>
                     <div class="modal-body">
 
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="panel panel-default">
-                                    <div class="panel-heading">Employee Detail:</div>
+                                    <!-- <div class="panel-heading">User Detail:</div> -->
                                     <div class="panel-body">
                                         <form data-toggle="validator" role="form" action="functionmis.php"
                                               method="post">
                                             <div class="row">
                                                 <div class="form-group col-lg-6">
-                                                    <label>Staff</label>
-                                                    <select class="form-control" id="staff_type" name="staff_type_id"
+                                                    <label>Privilege</label>
+                                                    <select class="form-control" id="staff_type_id" name="staff_type_id"
                                                             required>
-                                                        <option selected disabled>Select Staff Type</option>
+                                                        <option selected disabled>Select User Privilege</option>
                                                         <?php
-                                                        $query = "SELECT * FROM staff_type";
+                                                        $query = "SELECT * FROM privileges";
                                                         $result = mysqli_query($connection, $query);
                                                         if (mysqli_num_rows($result) > 0) {
                                                             while ($staff = mysqli_fetch_assoc($result)) {
                                                                 //  echo '<option value=" ' . $staff['staff_type_id'] . ' "  selected  >' . $staff['staff_type'] . '</option>';
-                                                                echo '<option value="' . $staff['staff_type_id'] . '" ' . (($staff['staff_type_id'] == $staffGlobal['staff_type_id']) ? 'selected="selected"' : "") . '>' . $staff['staff_type'] . '</option>';
+                                                                echo '<option value="' . $staff['privilege_id'] . '" ' . (($staff['privilege_id'] == $staffGlobal['privilege_id']) ? 'selected="selected"' : "") . '>' . $staff['privilege'] . '</option>';
                                                             }
                                                         }
                                                         ?>
                                                     </select>
                                                 </div>
 
-                                                <div class="form-group col-lg-6">
-                                                    <select style="visibility: hidden;" class="form-control" id="shift" name="shift_id" required>
-                                                        <option selected disabled>Select Staff Type</option>
-                                                        <?php
-                                                        $query = "SELECT * FROM shift";
-                                                        $result = mysqli_query($connection, $query);
-                                                        if (mysqli_num_rows($result) > 0) {
-                                                            while ($shift = mysqli_fetch_assoc($result)) {
-                                                                // echo '<option value="' . $shift['shift_id'] . '">' . $shift['shift'] . ' - ' . $shift['shift_timing'] . '</option>';
-                                                                echo '<option value="' . $shift['shift_id'] . '" ' . (($shift['shift_id'] == $staffGlobal['shift_id']) ? 'selected="selected"' : "") . '>' . $shift['shift_timing'] . '</option>';
-                                                            }
-                                                        }
-                                                        ?>
-                                                    </select>
-                                                </div>
-                                                <input type="hidden" value="<?php echo $staffGlobal['emp_id']; ?>"
-                                                       id="emp_id" name="emp_id">
+                                                <input type="hidden" value="<?php echo $staffGlobal['id']; ?>"
+                                                       id="user_id" name="user_id">
 
                                                 <div class="form-group col-lg-6">
-                                                    <label>First Name</label>
-                                                    <input type="text" value="<?php echo $fullname[0]; ?>"
-                                                           class="form-control" placeholder="First Name" id="first_name"
-                                                           name="first_name" required>
+                                                    <label>Full Name</label>
+                                                    <input type="text" value="<?php echo $staffGlobal['name']; ?>"
+                                                           class="form-control" placeholder="Full Name" id="full_name"
+                                                           name="full_name" required>
                                                 </div>
 
                                                 <div class="form-group col-lg-6">
-                                                    <label>Last Name</label>
-                                                    <input type="text" value="<?php echo $fullname[1]; ?>"
-                                                           class="form-control" placeholder="Last Name" id="last_name"
-                                                           name="last_name" required>
+                                                    <label>Username</label>
+                                                    <input type="text" value="<?php echo $staffGlobal['username']; ?>"
+                                                           class="form-control" placeholder="Username" id="username"
+                                                           name="username" required>
                                                 </div>
 
                                                 <div class="form-group col-lg-6">
-                                                    <label>ID Card Type</label>
-                                                    <select class="form-control" id="id_card_id" name="id_card_type"
-                                                            required>
-                                                        <option selected disabled>Select ID Card Type</option>
-                                                        <?php
-                                                        $query = "SELECT * FROM id_card_type";
-                                                        $result = mysqli_query($connection, $query);
-
-                                                        if (mysqli_num_rows($result) > 0) {
-                                                            while ($id_card_type = mysqli_fetch_assoc($result)) {
-                                                                //  echo '<option value="' . $id_card_type['id_card_type_id'] . '">' . $id_card_type['id_card_type'] . '</option>';
-                                                                echo '<option  value="' . $id_card_type['id_card_type_id'] . '" ' . (($id_card_type['id_card_type_id'] == $staffGlobal['id_card_type']) ? 'selected="selected"' : "") . '>' . $id_card_type['id_card_type'] . '</option>';
-                                                            }
-                                                        }
-
-                                                        ?>
-                                                    </select>
+                                                    <label>Email</label>
+                                                    <input type="email" class="form-control"
+                                                           placeholder="janedoe@mail.com" id="email"
+                                                           value="<?php echo $staffGlobal['email']; ?>"
+                                                           name="email" required>
                                                 </div>
 
                                                 <div class="form-group col-lg-6">
-                                                    <label>ID Card No</label>
-                                                    <input type="text" class="form-control" placeholder="ID Card No"
-                                                           id="id_card_no"
-                                                           value="<?php echo $staffGlobal['id_card_no']; ?>"
-                                                           name="id_card_no" required>
-                                                </div>
-                                                <div class="form-group col-lg-6">
-                                                    <label>Contact Number</label>
-                                                    <input type="number" class="form-control"
-                                                           placeholder="Contact Number" id="contact_no"
-                                                           value="<?php echo $staffGlobal['contact_no']; ?>"
-                                                           name="contact_no" required>
+                                                    <label>Password</label>
+                                                    <input type="password" class="form-control" placeholder="password"
+                                                           id="password" name="password">
                                                 </div>
 
                                                 <div class="form-group col-lg-6">
-                                                    <label>Address</label>
-                                                    <input type="text" class="form-control" placeholder="address"
-                                                           id="address" value="<?php echo $staffGlobal['address']; ?>"
-                                                           name="address">
-                                                </div>
-
-                                                <div class="form-group col-lg-6">
-                                                    <label>Salary</label>
-                                                    <input type="number" class="form-control" placeholder="Salary"
-                                                           id="salary" value="<?php echo $staffGlobal['salary']; ?>"
-                                                           name="salary" required>
+                                                    <label>Repeat Password</label>
+                                                    <input type="password" class="form-control" placeholder="repeat password"
+                                                           id="repeat_password" name="repeat_password">
                                                 </div>
 
                                             </div>
 
-                                            <button type="submit" class="btn btn-lg btn-primary" name="submit">Submit
-                                            </button>
-                                            <button type="reset" class="btn btn-lg btn-danger">Reset</button>
+                                            <button type="submit" class="btn btn-lg btn-primary" name="update">Submit</button>
                                         </form>
                                     </div>
                                 </div>
                             </div>
-
-
                         </div>
 
                     </div>
@@ -297,3 +253,12 @@ if (mysqli_num_rows($staff_result) > 0) {
         <?php
     }
 }
+function get_user($vl){
+    global $connection;
+    $query = "SELECT * from user WHERE id = $vl";
+    $result = mysqli_query($connection, $query);
+
+    $itemDetails = mysqli_fetch_assoc($result);
+    echo $itemDetails['name'];
+};
+?>

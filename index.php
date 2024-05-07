@@ -137,6 +137,9 @@ elseif (isset($_GET['users'])){
 elseif (isset($_GET['add_user'])){
     include_once "add_user.php";
 }
+elseif (isset($_GET['change_password'])){
+    include_once "change_password.php";
+}
 elseif (isset($_GET['room_mang'])){
     include_once "room_mang.php";
 }

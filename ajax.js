@@ -692,6 +692,44 @@ $("#addUser").submit(function () {
   return false;
 });
 
+$("#changePword").submit(function () {
+  var userId = $("#userId").val();
+  var pword = $("#pword").val();
+  var old_password = $("#old_password").val();
+  var new_password = $("#new_password").val();
+  var repeat_password = $("#repeat_password").val();
+
+  $.ajax({
+    type: "post",
+    url: "ajax.php",
+    dataType: "JSON",
+    data: {
+      userId: userId,
+      pword: pword,
+      old_password: old_password,
+      new_password: new_password,
+      repeat_password: repeat_password,
+      change_password: "",
+    },
+    success: function (response) {
+      if (response.done == true) {
+        document.getElementById("changePword").reset();
+        $(".user-response").html(
+          '<div class="alert bg-success alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>Password Successfully Changed</div>'
+        );
+      } else {
+        $(".user-response").html(
+          '<div class="alert bg-danger alert-dismissable" role="alert"><em class="fa fa-lg fa-warning">&nbsp;</em>' +
+            response.data +
+            "</div>"
+        );
+      }
+    },
+  });
+
+  return false;
+});
+
 $("#edit_employee").submit(function () {
   var staff_type = $("#staff_type").val();
   var shift = $("#shift").val();

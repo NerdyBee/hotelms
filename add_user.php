@@ -4,13 +4,13 @@
             <li><a href="#">
                     <em class="fa fa-home"></em>
                 </a></li>
-            <li class="active">Add Employee</li>
+            <li class="active">Add User</li>
         </ol>
     </div><!--/.row-->
 
     <!-- <div class="row">
         <div class="col-lg-12">
-            <h1 class="page-header">Add Employee</h1>
+            <h1 class="page-header">Add User</h1>
         </div>
     </div> -->
     <!--/.row-->
@@ -18,7 +18,7 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="panel panel-default">
-                <div class="panel-heading">Employee Detail:</div>
+                <div class="panel-heading">User Detail:</div>
                 <div class="panel-body">
                     <div class="user-response"></div>
                     <form role="form" id="addUser" data-toggle="validator">

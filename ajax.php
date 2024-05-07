@@ -20,7 +20,7 @@ if (isset($_POST['login'])) {
     } else {
         $pword = md5($password);
         // $query = "SELECT * FROM user WHERE username = '$email' OR email ='$email' AND password = '$pword'";
-        $query = "SELECT * FROM user WHERE (username = '$email' OR email ='$email') AND password = '$pword'";
+        $query = "SELECT * FROM user WHERE (username = '$email' OR email ='$email') AND password = '$pword' AND status = 1";
 
         $result = mysqli_query($connection, $query);
         if (mysqli_num_rows($result) == 1) {
@@ -992,8 +992,8 @@ if (isset($_POST['check_out_room'])) {
         $cus_details = mysqli_fetch_assoc($resultCus);
         $remaining_price = $cus_details['total_price'] + $extras;
 
-        if ($remaining_price == $remaining_amount) {
-        // if ($remaining_price) {
+        // if ($remaining_price == $remaining_amount) {
+        if ($booking_id) {
             $updateCustomer = "UPDATE customer SET remaining_price = '0',payment_status = '1' WHERE customer_id = '$customer_id'";
             $resultCustomer = mysqli_query($connection, $updateCustomer);
             $updateBooking = "UPDATE booking SET remaining_p = '0',payment_stat = '1',checkin_status = '0',checkout_status = '1' WHERE booking_id = '$booking_id'";
@@ -1189,6 +1189,38 @@ if (isset($_POST['add_user'])) {
             $response['done'] = false;
             $response['data'] = "DataBase Error in adding user";
         }
+    }
+    echo json_encode($response);
+}
+
+if (isset($_POST['change_password'])) {
+    $userId = $_POST['userId'];
+    $pword = $_POST['pword'];
+    $old_password = $_POST['old_password'];
+    $new_password = $_POST['new_password'];
+    $repeat_password = $_POST['repeat_password'];
+
+    if ($new_password != $repeat_password || $pword != md5($old_password)){
+        $response['done'] = false;
+        $response['data'] = "Password mismatch, Please check and try again.";
+    }else{
+        $wordp = md5($new_password);
+        $query = "UPDATE user SET password=? WHERE id=?";
+
+        // Prepare and bind parameters
+        $stmt = mysqli_prepare($connection, $query);
+        mysqli_stmt_bind_param($stmt, "si", $wordp, $userId);
+
+        // Execute the query
+        if (mysqli_stmt_execute($stmt)) {
+            $response['done'] = true;
+            $response['data'] = 'Successfully User Added';
+        } else {
+            $response['done'] = false;
+            $response['data'] = "DataBase Error in adding user";
+        }
+        
+        mysqli_stmt_close($stmt);
     }
     echo json_encode($response);
 }

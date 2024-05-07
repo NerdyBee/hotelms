@@ -38,6 +38,9 @@ $company_phone="+234706765393";
                         <em class="fa fa-user"></em>
                     </a>
                     <ul class="dropdown-menu dropdown-alerts">
+                        <li><a href="index.php?change_password"><i class="fa fa-key" style="color:blue;"></i>
+                                Change Password
+                            </a></li>
                         <li><a href="logout.php"><i class="fa fa-power-off" style="color:red;"></i>
                                 Logout
                             </a></li>

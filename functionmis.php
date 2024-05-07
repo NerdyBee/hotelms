@@ -22,11 +22,8 @@ if (isset($_POST['login'])) {
         header('Location: index.php?room_mang');
     }
     else{
-
         header('Location: login.php');
     }
-
-
 }
 
 if (isset($_POST['submit'])) {
@@ -54,8 +51,37 @@ WHERE emp_id=$emp_id ";
     } else {
         echo "Error updating record: " . mysqli_error($conn);
     }
+}
 
+if (isset($_POST['update'])) {
 
+    $user_id = $_POST['user_id'];
+    $staff_type = $_POST['staff_type_id'];
+    $full_name = $_POST['full_name'];
+    $username = $_POST['username'];
+    $email= $_POST['email'];
+    $password = $_POST['password'];
+    $repeat_password = $_POST['repeat_password'];
+
+    // Validate password and ensure it matches the repeat password
+    // if ($password !== $repeat_password || strlen($password) < 8) {
+    if ($password !== $repeat_password) {
+        header('Location: index.php?users&error=password_mismatch_or_weak');
+        exit();
+    }
+
+    if($password != '' || $password != ' ') {
+        $pword = md5($password);
+        $query="UPDATE user SET name='$full_name', username='$username', email='$email', privilege_id=$staff_type, password='$pword' WHERE id=$user_id ";
+    } else {
+        $query="UPDATE user SET name='$full_name', username='$username', email='$email', privilege_id=$staff_type WHERE id=$user_id ";
+    }
+
+    if (mysqli_query($connection, $query)) {
+        header('Location: index.php?users&updated');
+    } else {
+        header('Location: index.php?users&error');
+    }
 }
 
 if (isset($_GET['empid'])!="")
@@ -66,6 +92,28 @@ if (isset($_GET['empid'])!="")
         header('Location: index.php?staff_mang');
     } else {
         echo "Error updating record: " . mysqli_error($connection);
+    }
+}
+
+if (isset($_GET['userid'])!="")
+{
+   $user_id=$_GET['userid'];
+    $deleteQuery = "UPDATE user SET status = 0 WHERE id=$user_id";
+    if (mysqli_query($connection, $deleteQuery)) {
+        header('Location: index.php?users&deactivate_user');
+    } else {
+        header('Location: index.php?users&error');
+    }
+}
+
+if (isset($_GET['restore'])!="")
+{
+   $user_id=$_GET['restore'];
+    $deleteQuery = "UPDATE user SET status = 1 WHERE id=$user_id";
+    if (mysqli_query($connection, $deleteQuery)) {
+        header('Location: index.php?users&activate_user');
+    } else {
+        header('Location: index.php?users&error');
     }
 }
 

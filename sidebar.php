@@ -1,9 +1,9 @@
 <?php
-    $sup = [1, 2, 7];
-    $md = [6, 7];
-    $bar = [4, 5, 7];
-    $third_rule = [2, 3, 7];
-    $fouth_rule = [2, 6, 7];
+    $sup = [1, 2, 7, 8];
+    $md = [6, 7, 8];
+    $bar = [4, 5, 7, 8];
+    $third_rule = [2, 3, 7, 8];
+    $fouth_rule = [2, 6, 7, 8];
 ?>
 <div id="sidebar-collapse" class="col-sm-3 col-lg-2 sidebar">
     <div class="profile-sidebar">
