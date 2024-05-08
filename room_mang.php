@@ -52,23 +52,8 @@
                         </thead>
                         <tbody>
                         <?php
-                        // $room_query = "SELECT * FROM room NATURAL JOIN room_type WHERE deleteStatus = 0";
-                        // $rooms_result = mysqli_query($connection, $room_query);
 
-                        // $room_query = "SELECT room.*, room_type.*, 
-                        //     COALESCE('Booked', 'Available') AS availability
-                        // FROM room 
-                        // INNER JOIN room_type ON room.room_type_id = room_type.room_type_id
-                        // LEFT JOIN booking ON room.room_id = booking.room_id AND booking.check_in = '$todays'";
-
-                        // $room_query = "SELECT room.*, room_type.*, 
-                        //     COALESCE('Booked', 'Available') AS availability
-                        // FROM room 
-                        // INNER JOIN room_type ON room.room_type_id = room_type.room_type_id
-                        // LEFT JOIN booking ON room.room_id = booking.room_id 
-                        // AND STR_TO_DATE(booking.check_in, '%d-%m-%Y') = STR_TO_DATE('$todays', '%d-%m-%Y')";
-
-                        $room_query = "SELECT room.*, room_type.*, 
+                        $room_query = "SELECT room.*, room_type.*, booking.*,
                             CASE 
                                 WHEN booking.room_id IS NOT NULL THEN 'Booked'
                                 ELSE 'Available'
@@ -102,7 +87,7 @@
                                     <td>
                                         <?php
                                         if ($rooms['availability'] == 'Booked' && $rooms['check_in_status'] == 0) {
-                                            echo '<button class="btn btn-warning" id="checkInRoom"  data-id="' . $rooms['room_id'] . '" data-toggle="modal" style="border-radius:0%" data-target="#checkIn">Check In</button>';
+                                            echo '<button class="btn btn-warning" id="checkInRoom"  data-id="' . $rooms['room_id'] . '" data-customer-id="' . $rooms['customer_id'] . '" data-toggle="modal" style="border-radius:0%" data-target="#checkIn">Check In</button>';
                                         } elseif ($rooms['availability'] == 'Available') {
                                             echo '-';
                                         } else {
@@ -114,7 +99,7 @@
                                     <td>
                                         <?php
                                         if ($rooms['check_in_status'] == 1) {
-                                            echo '<button class="btn btn-primary" style="border-radius:0%" id="checkOutRoom" data-id="' . $rooms['room_id'] . '">Check Out</button>';
+                                            echo '<button class="btn btn-primary" style="border-radius:0%" id="checkOutRoom" data-id="' . $rooms['room_id'] . '" data-customer-id="' . $rooms['customer_id'] . '">Check Out</button>';
                                         } elseif ($rooms['availability'] == 'Available') {
                                             echo '-';
                                         }
@@ -127,13 +112,13 @@
                                                 id="roomEdit" class="btn btn-info"><i class="fa fa-pencil"></i></button>
                                         <?php
                                         if ($rooms['availability'] == 'Booked' || $rooms['check_in_status'] == 1) {
-                                            echo '<button title="Customer Information" data-toggle="modal" data-target="#cutomerDetailsModal" data-id="' . $rooms['room_id'] . '" id="cutomerDetails" class="btn btn-warning" style="border-radius:60px;"><i class="fa fa-eye"></i></button>';
+                                            echo '<button title="Customer Information" data-toggle="modal" data-target="#cutomerDetailsModal" data-id="' . $rooms['room_id'] . '" data-customer-id="' . $rooms['customer_id'] . '" id="cutomerDetails" class="btn btn-warning" style="border-radius:60px;"><i class="fa fa-eye"></i></button>';
                                         }
                                         ?>
                                         <?php
                                         // if ($rooms['availability'] == 'Booked' && $rooms['check_in_status'] == 1) {
                                         if ($rooms['check_in_status'] == 1) {
-                                            echo '<button title="Customer Payment" data-toggle="modal" data-target="#morePaymentModal" data-id="' . $rooms['room_id'] . '" id="morePayments" class="btn btn-success" style="border-radius:60px;"><i class="fa fa-money"></i></button>';
+                                            echo '<button title="Customer Payment" data-toggle="modal" data-target="#morePaymentModal" data-id="' . $rooms['room_id'] . '" data-customer-id="' . $rooms['customer_id'] . '" id="morePayments" class="btn btn-success" style="border-radius:60px;"><i class="fa fa-money"></i></button>';
                                         }
                                         ?>
 
@@ -452,10 +437,10 @@
                                 </div>
                                 <div class="form-group col-lg-12">
                                     <label>Payment Type</label>
-                                    <select class="form-control" id="payment_type" required
+                                    <select class="form-control" id="payment_type_o" required
                                             data-error="Select Payment Type">
                                         <option selected disabled>Select Payment Method</option>
-                                        <option value="Cash">Cashes</option>
+                                        <option value="Cash">Cash</option>
                                         <option value="POS">POS</option>
                                         <option value="Transfer">Transfer</option>
                                     </select>
@@ -532,7 +517,7 @@
                                     <select class="form-control" id="payment_type_m" required
                                             data-error="Select Payment Type">
                                         <option selected disabled>Select Payment Method</option>
-                                        <option value="Cash">Cashes</option>
+                                        <option value="Cash">Cash</option>
                                         <option value="POS">POS</option>
                                         <option value="Transfer">Transfer</option>
                                     </select>

@@ -433,6 +433,7 @@ $(document).on("click", "#cutomerDetails", function (e) {
   e.preventDefault();
 
   var room_id = $(this).data("id");
+  var cust_id = $(this).data("customer-id");
   // alert(room_id);
   console.log(room_id);
 
@@ -442,6 +443,7 @@ $(document).on("click", "#cutomerDetails", function (e) {
     dataType: "JSON",
     data: {
       room_id: room_id,
+      cust_id: cust_id,
       cutomerDetails: "",
     },
     success: function (response) {
@@ -470,7 +472,8 @@ $(document).on("click", "#checkInRoom", function (e) {
   e.preventDefault();
 
   var room_id = $(this).data("id");
-  console.log(room_id);
+  var cust_id = $(this).data("customer-id");
+  console.log(cust_id);
 
   $.ajax({
     type: "post",
@@ -478,6 +481,7 @@ $(document).on("click", "#checkInRoom", function (e) {
     dataType: "JSON",
     data: {
       room_id: room_id,
+      cust_id: cust_id,
       booked_room: "",
     },
     success: function (response) {
@@ -543,6 +547,7 @@ $(document).on("click", "#checkOutRoom", function (e) {
   e.preventDefault();
 
   var room_id = $(this).data("id");
+  var cust_id = $(this).data("customer-id");
 
   $.ajax({
     type: "post",
@@ -550,6 +555,7 @@ $(document).on("click", "#checkOutRoom", function (e) {
     dataType: "JSON",
     data: {
       room_id: room_id,
+      cust_id: cust_id,
       booked_room: "",
     },
     success: function (response) {
@@ -559,8 +565,8 @@ $(document).on("click", "#checkOutRoom", function (e) {
         $("#getRoomNo_n").html(response.room_no);
         $("#getCheckIn_n").html(response.check_in);
         $("#getCheckOut_n").html(response.check_out);
-        $("#getTotalPrice_n").html(response.total_price + "/-");
-        $("#getRemainingPrice_n").html(response.remaining_price + "/-");
+        $("#getTotalPrice_n").html(response.total_price);
+        $("#getRemainingPrice_n").html(response.remaining_price);
         $("#getBookingId_n").val(response.booking_id);
         $("#checkOut").modal("show");
       } else {
@@ -573,10 +579,10 @@ $(document).on("click", "#checkOutRoom", function (e) {
 $("#checkOutRoom_n").submit(function () {
   var booking_id = $("#getBookingId_n").val();
   var remaining_amount = $("#remaining_amount").val();
-  var payment_type = $("#payment_type").val();
-  var remainingPrice = $("#getRemainingPrice_n").val();
+  var payment_type = $("#payment_type_o").val();
+  var remainingPrice = $("#getRemainingPrice_n").html();
 
-  console.log(payment_type);
+  // console.log(payment_type);
 
   $.ajax({
     type: "post",

@@ -824,6 +824,7 @@ if (isset($_POST['hallCutomerDetails'])) {
 if (isset($_POST['cutomerDetails'])) {
     //$customer_result='';
     $room_id = $_POST['room_id'];
+    $cust_id = $_POST['cust_id'];
 
     if ($room_id != '') {
         // $sql = "SELECT * FROM room NATURAL JOIN room_type NATURAL JOIN booking NATURAL JOIN customer WHERE room_id = '$room_id'";
@@ -832,7 +833,7 @@ if (isset($_POST['cutomerDetails'])) {
         JOIN room_type ON room.room_type_id = room_type.room_type_id 
         JOIN booking ON room.room_id = booking.room_id 
         JOIN customer ON booking.customer_id = customer.customer_id 
-        WHERE room.room_id = '$room_id' AND booking.checkout_status = 0";
+        WHERE room.room_id = '$room_id' AND booking.checkout_status = 0 AND customer.customer_id = '$cust_id'";
         
         $result = mysqli_query($connection, $sql);
         if ($result) {
@@ -889,13 +890,14 @@ if (isset($_POST['booked_hall'])) {
 
 if (isset($_POST['booked_room'])) {
     $room_id = $_POST['room_id'];
+    $cust_id = $_POST['cust_id'];
 
     // $sql = "SELECT * FROM room NATURAL JOIN room_type NATURAL JOIN booking NATURAL JOIN customer WHERE room_id = '$room_id'";
     $sql = "SELECT * FROM room 
         JOIN room_type ON room.room_type_id = room_type.room_type_id 
         JOIN booking ON room.room_id = booking.room_id 
         JOIN customer ON booking.customer_id = customer.customer_id 
-        WHERE room.room_id = '$room_id' AND booking.checkout_status = 0";
+        WHERE room.room_id = '$room_id' AND booking.checkout_status = 0 AND booking.customer_id = '$cust_id'";
 
     $result = mysqli_query($connection, $sql);
     if ($result) {
@@ -976,6 +978,7 @@ if (isset($_POST['check_in_room'])) {
 if (isset($_POST['check_out_room'])) {
     $booking_id = $_POST['booking_id'];
     $remaining_amount = $_POST['remaining_amount'];
+    $remainingPrice = $_POST['remainingPrice'];
     $payment_type = $_POST['payment_type'];
     $added_by = $_SESSION['user_id'];
 
@@ -987,13 +990,13 @@ if (isset($_POST['check_out_room'])) {
         $customer_id = $booking_details['customer_id'];
         $remaining_p = $booking_details['remaining_p'];
         $extras = $booking_details['extras'];
-        $queryCus = "SELECT * FROM customer WHERE customer_id = '$customer_id'";
-        $resultCus = mysqli_query($connection, $queryCus);
-        $cus_details = mysqli_fetch_assoc($resultCus);
-        $remaining_price = $cus_details['total_price'] + $extras;
+        // $queryCus = "SELECT * FROM customer WHERE customer_id = '$customer_id'";
+        // $resultCus = mysqli_query($connection, $queryCus);
+        // $cus_details = mysqli_fetch_assoc($resultCus);
+        // $remaining_price = $cus_details['total_price'] + $extras;
 
-        // if ($remaining_price == $remaining_amount) {
-        if ($booking_id) {
+        if ($remainingPrice == $remaining_amount) {
+        // if ($remaining_price) {
             $updateCustomer = "UPDATE customer SET remaining_price = '0',payment_status = '1' WHERE customer_id = '$customer_id'";
             $resultCustomer = mysqli_query($connection, $updateCustomer);
             $updateBooking = "UPDATE booking SET remaining_p = '0',payment_stat = '1',checkin_status = '0',checkout_status = '1' WHERE booking_id = '$booking_id'";
@@ -1002,7 +1005,7 @@ if (isset($_POST['check_out_room'])) {
                 $updateRoom = "UPDATE room SET status = NULL,check_in_status = '0',check_out_status = '1' WHERE room_id = '$room_id'";
                 $updateResult = mysqli_query($connection, $updateRoom);
                 if ($updateResult) {
-                    if($amount != 0){
+                    if($remaining_amount){
                         $paymentHistory = "INSERT INTO payment_history(booking_id,customer_id,payment_type,amount,added_by) VALUES ('$booking_id', '$customer_id', '$payment_type', '$remaining_amount', '$added_by')";
                         $paymentResult = mysqli_query($connection, $paymentHistory);
                     }

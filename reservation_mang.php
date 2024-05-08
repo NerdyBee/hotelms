@@ -72,12 +72,13 @@
                                         <!-- <button title="Edit Booking" style="border-radius:60px;" data-toggle="modal"
                                             data-target="#editBooking" data-id="<-?php echo $staff['booking_id']; ?>"
                                             id="bookingEdit" class="btn btn-info"><i class="fa fa-pencil"></i></button> -->
-                                        
+                                        <?php if ($staff['checkout_status'] == 0): ?>
                                         <a title="Edit Booking" href="index.php?edit_reservation&booking_id=<?php echo $staff['booking_id']; ?>"
                                            class="btn btn-info" style="border-radius:60px;"><i
                                                     class="fa fa-pencil" alt="edit"></i></a>
+                                        <?php endif; ?>
 
-                                        <?php if ($staff['checkin_status'] == 0): ?>
+                                        <?php if ($staff['checkin_status'] == 0 && $staff['checkout_status'] == 0): ?>
                                             <a href="ajax.php?delete_booking=<?php echo $staff['booking_id']; ?>&customer=<?php echo $staff['customer_id']; ?>"
                                             class="btn btn-danger" style="border-radius:60px;" onclick="return confirm('Are you Sure?')">
                                             <i class="fa fa-trash" alt="delete"></i>

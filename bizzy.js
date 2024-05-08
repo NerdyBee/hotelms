@@ -194,6 +194,7 @@ $("#hallPayment").submit(function () {
 $(document).on("click", "#morePayments", function (e) {
   e.preventDefault();
 
+  var cust_id = $(this).data("customer-id");
   var room_id = $(this).data("id");
   console.log(room_id);
 
@@ -203,6 +204,7 @@ $(document).on("click", "#morePayments", function (e) {
     dataType: "JSON",
     data: {
       room_id: room_id,
+      cust_id: cust_id,
       booked_room: "",
     },
     success: function (response) {
@@ -229,6 +231,7 @@ $("#morePayment_p").submit(function () {
   var payment_type = $("#payment_type_m").val();
 
   console.log(payment_type);
+  console.log(booking_id);
 
   $.ajax({
     type: "post",
