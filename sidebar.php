@@ -1,7 +1,8 @@
 <?php
     $sup = [1, 2, 7, 8];
     $md = [6, 7, 8];
-    $bar = [4, 5, 7, 8];
+    $bar = [5, 7, 8];
+    $wait = [4, 7, 8];
     $third_rule = [2, 3, 7, 8];
     $fouth_rule = [2, 6, 7, 8];
 ?>
@@ -169,7 +170,7 @@
                 </li>
             <?php }
         }
-        if(in_array($_SESSION['user_privilege'], $bar)) {
+        if(in_array($_SESSION['user_privilege'], $wait)) {
             if (isset($_GET['kitchen'])){ ?>
                 <li class="active">
                     <a href="index.php?kitchen"><em class="fa fa-cutlery">&nbsp;</em>
@@ -184,7 +185,7 @@
                 </li>
             <?php }
         }
-        if(in_array($_SESSION['user_privilege'], $bar)) {
+        if(in_array($_SESSION['user_privilege'], $third_rule)) {
             if (isset($_GET['gym'])){ ?>
                 <li class="active">
                     <a href="index.php?gym"><em class="fa fa-bicycle">&nbsp;</em>
@@ -199,7 +200,7 @@
                 </li>
             <?php }
         }
-        if(in_array($_SESSION['user_privilege'], $bar)) {
+        if(in_array($_SESSION['user_privilege'], $third_rule)) {
             if (isset($_GET['laundry'])){ ?>
                 <li class="active">
                     <a href="index.php?laundry"><em class="fa fa-money">&nbsp;</em>
@@ -214,7 +215,7 @@
                 </li>
             <?php }
         }
-        if(in_array($_SESSION['user_privilege'], $bar)) {
+        if(in_array($_SESSION['user_privilege'], $third_rule)) {
             if (isset($_GET['laundry_services'])){ ?>
                 <li class="active">
                     <a href="index.php?laundry_services"><em class="fa fa-wrench">&nbsp;</em>

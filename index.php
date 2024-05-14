@@ -20,8 +20,11 @@ if (isset($_GET['room_mang'])){
 elseif (isset($_GET['dashboard']) && in_array($user_privilege, array(1, 2, 3, 7, 8))){
     include_once "report_dashboard.php";
 }
-elseif (isset($_GET['dashboard']) && !in_array($user_privilege, array(1, 2, 3, 7, 8))){
+elseif (isset($_GET['dashboard']) && in_array($user_privilege, array(6))){
     include_once "dashboard.php";
+}
+elseif (isset($_GET['dashboard']) && in_array($user_privilege, array(4, 5))){
+    include_once "user_dashboard.php";
 }
 elseif (isset($_GET['reservation_mang'])){
     include_once "reservation_mang.php";
