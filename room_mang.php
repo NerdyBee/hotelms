@@ -62,7 +62,7 @@
                         INNER JOIN room_type ON room.room_type_id = room_type.room_type_id
                         LEFT JOIN booking ON room.room_id = booking.room_id 
                         AND STR_TO_DATE(booking.check_in, '%d-%m-%Y') <= CURDATE()
-                        AND STR_TO_DATE(booking.check_out, '%d-%m-%Y') > CURDATE()
+                        AND STR_TO_DATE(booking.check_out, '%d-%m-%Y') >= CURDATE()
                         AND booking.checkout_status = 0
                         WHERE room.deleteStatus = 0
                         ORDER BY room_type.room_type";
@@ -76,7 +76,7 @@
                                     <!-- <td><-?php echo $rooms['availability'] ?></td> -->
                                     <td>
                                         <?php
-                                        if ($rooms['availability'] == 'Available') {
+                                        if ($rooms['availability'] == 'Available'  && $rooms['check_in_status'] == 0) {
                                             echo '<a href="index.php?reservation&room_id=' . $rooms['room_id'] . '&room_type_id=' . $rooms['room_type_id'] . '" class="btn btn-success" style="border-radius:0%">Book Room</a>';
                                         } else {
                                             echo '<a href="#" class="btn btn-danger" style="border-radius:0%">Booked</a>';
@@ -88,7 +88,7 @@
                                         <?php
                                         if ($rooms['availability'] == 'Booked' && $rooms['check_in_status'] == 0) {
                                             echo '<button class="btn btn-warning" id="checkInRoom"  data-id="' . $rooms['room_id'] . '" data-customer-id="' . $rooms['customer_id'] . '" data-toggle="modal" style="border-radius:0%" data-target="#checkIn">Check In</button>';
-                                        } elseif ($rooms['availability'] == 'Available') {
+                                        } elseif ($rooms['availability'] == 'Available'  && $rooms['check_in_status'] == 0) {
                                             echo '-';
                                         } else {
 
@@ -107,9 +107,9 @@
                                     </td>
                                     <td>
 
-                                        <button title="Edit Room Information" style="border-radius:60px;" data-toggle="modal"
-                                                data-target="#editRoom" data-id="<?php echo $rooms['room_id']; ?>"
-                                                id="roomEdit" class="btn btn-info"><i class="fa fa-pencil"></i></button>
+                                        <!-- <button title="Edit Room Information" style="border-radius:60px;" data-toggle="modal"
+                                                data-target="#editRoom" data-id="<-?php echo $rooms['room_id']; ?>"
+                                                id="roomEdit" class="btn btn-info"><i class="fa fa-pencil"></i></button> -->
                                         <?php
                                         if ($rooms['availability'] == 'Booked' || $rooms['check_in_status'] == 1) {
                                             echo '<button title="Customer Information" data-toggle="modal" data-target="#cutomerDetailsModal" data-id="' . $rooms['room_id'] . '" data-customer-id="' . $rooms['customer_id'] . '" id="cutomerDetails" class="btn btn-warning" style="border-radius:60px;"><i class="fa fa-eye"></i></button>';

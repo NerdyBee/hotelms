@@ -119,36 +119,6 @@
         </div>
     </div>
 
-    <!-- Add Item Modal -->
-    <div id="complaintModal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Complaint Resolve</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <form data-toggle="validator" role="form" method="post" action="ajax.php">
-                                <div class="form-group">
-                                    <label>Budget</label>
-                                    <input class="form-control" placeholder="Budget" name="budget" data-error="Enter Budget" required>
-                                    <div class="help-block with-errors"></div>
-                                </div>
-                                <input type="hidden" id="complaint_id" name="complaint_id" value="">
-                                <button class="btn btn-success pull-right" name="resolve_complaint">Resolve Complaint</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
     <!--Edit Room Modal -->
     <div id="editItem" class="modal fade" role="dialog">
         <div class="modal-dialog">

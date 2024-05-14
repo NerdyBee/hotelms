@@ -83,7 +83,7 @@ if ($result_gym->num_rows > 0) {
     $gym_sales = $row_gym['gym_sales'];
 }
 
-// Prepare and execute SQL query for bookinh sales
+// Prepare and execute SQL query for booking payment
 $sql_book = "SELECT DATE_FORMAT(created_at, '%Y-%m') AS month_year,
                 SUM(amount) AS payment_history
             FROM payment_history
@@ -115,7 +115,7 @@ if ($result_book_count->num_rows > 0) {
     $book_count = $row_book_count['books'];
 }
 
-// Prepare and execute SQL query for bookinh sales
+// Prepare and execute SQL query for hall payment
 $sql_hall_book = "SELECT DATE_FORMAT(created_at, '%Y-%m') AS month_year,
                 SUM(amount) AS payment_history
             FROM hall_payment_history
@@ -131,7 +131,7 @@ if ($result_hall->num_rows > 0) {
     $hall_sales = $row_hall['payment_history'];
 }
 
-// Prepare and execute SQL query for number of booked rooms
+// Prepare and execute SQL query for number of booked halls
 $sql_hall_count = "SELECT DATE_FORMAT(created_at, '%Y-%m') AS month_year,
                 COUNT(*) AS books
             FROM hall_booking
@@ -147,6 +147,38 @@ if ($result_hall_count->num_rows > 0) {
     $hall_count = $row_hall_count['books'];
 }
 
+// Prepare and execute SQL query for expenses
+$sql_exp = "SELECT DATE_FORMAT(created_at, '%Y-%m') AS month_year,
+                SUM(amount) AS expense
+            FROM expenses
+            WHERE YEAR(created_at) = $selected_year
+            AND MONTH(created_at) = $selected_month
+            GROUP BY DATE_FORMAT(created_at, '%Y-%m')";
+
+$result_exp = $connection->query($sql_exp);
+$exp_sales = 0;
+
+if ($result_exp->num_rows > 0) {
+    $row_exp = $result_exp->fetch_assoc();
+    $exp_sales = $row_exp['expense'];
+}
+
+// Prepare and execute SQL query for expenses  "or resolve_date
+$sql_complaint = "SELECT DATE_FORMAT(created_at, '%Y-%m') AS month_year,
+                SUM(budget) AS cost
+            FROM complaint
+            WHERE YEAR(created_at) = $selected_year
+            AND MONTH(created_at) = $selected_month
+            GROUP BY DATE_FORMAT(created_at, '%Y-%m')";
+
+$result_complaint = $connection->query($sql_complaint);
+$complaint_sales = 0;
+
+if ($result_complaint->num_rows > 0) {
+    $row_complaint = $result_complaint->fetch_assoc();
+    $complaint_sales = $row_complaint['cost'];
+}
+
 // Set JSON header
 header('Content-Type: application/json');
 
@@ -160,6 +192,9 @@ echo json_encode([
     'book_count' => $book_count,
     'hall_sales' => $hall_sales,
     'hall_count' => $hall_count,
+    'expenses' => $exp_sales,
+    'complaint' => $complaint_sales,
+    'total_spend' => $exp_sales + $complaint_sales,
     'total_earnings' => $bar_sales + $kitchen_sales + $laundry_sales + $gym_sales + $book_sales + $hall_sales,
 ]);
 ?>

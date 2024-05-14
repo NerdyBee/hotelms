@@ -66,7 +66,7 @@
                                     <td><?php echo $staff['check_out']; ?></td>
                                     <td><?php echo number_format($staff['discount']); ?></td>
                                     <td><?php echo number_format($staff['total_price']); ?></td>
-                                    <td><?php echo number_format($staff['remaining_price']); ?></td>
+                                    <td><?php echo number_format($staff['total_price'] - $staff['paid']); ?></td>
                                     <td><?php get_user($staff['added_by']); ?></td>
                                     <td>
                                         <!-- <button title="Edit Booking" style="border-radius:60px;" data-toggle="modal"
@@ -85,7 +85,7 @@
                                             </a>
                                         <?php endif; ?>
                                         
-                                        <button title="Customer Payment" data-toggle="modal" data-target="#morePaymentModal" data-id=<?php echo $staff['room_id']; ?> id="morePayments" class="btn btn-success" style="border-radius:60px;"><i class="fa fa-money"></i></button>
+                                        <button title="Customer Payment" data-toggle="modal" data-target="#morePaymentModal" data-id=<?php echo $staff['room_id']; ?> data-customer-id=<?php echo $staff['customer_id']; ?> id="morePayments" class="btn btn-success" style="border-radius:60px;"><i class="fa fa-money"></i></button>
                                                     <!-- <a href="ajax.php?delete_booking=<-?php echo $staff['booking_id']; ?>&customer=<-?php echo $staff['customer_id']; ?>"
                                             class="btn btn-danger" style="border-radius:60px;" onclick="return confirm('Are you Sure?')">
                                             <i class="fa fa-trash" alt="delete"></i></a> -->

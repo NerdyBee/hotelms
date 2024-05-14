@@ -850,7 +850,7 @@ if (isset($_POST['cutomerDetails'])) {
             $response['id_card_no'] = $customer_details['id_card_no'];
             $response['id_card_type_id'] = $id_type_name['id_card_type'];
             $response['address'] = $customer_details['address'];
-            $response['remaining_price'] = $customer_details['remaining_price'] + $customer_details['extras'];
+            $response['remaining_price'] = $customer_details['total_price'] - $customer_details['paid'] + $customer_details['extras'];
         } else {
             $response['done'] = false;
             $response['data'] = "DataBase Error";
@@ -910,7 +910,7 @@ if (isset($_POST['booked_room'])) {
         $response['check_in'] = date('M j, Y', strtotime($room['check_in']));
         $response['check_out'] = date('M j, Y', strtotime($room['check_out']));
         $response['total_price'] = $room['total_price'] + $room['extras'];
-        $response['remaining_price'] = $room['remaining_price'] + $room['extras'];
+        $response['remaining_price'] = $room['total_price'] - $room['paid'] + $room['extras'];
     } else {
         $response['done'] = false;
         $response['data'] = "DataBase Error";
@@ -939,9 +939,11 @@ if (isset($_POST['check_in_room'])) {
         $cus_details = mysqli_fetch_assoc($resultCus);
         $remaining_price = $cus_details['remaining_price'] - $advance_payment;
 
-        $updateCustomer = "UPDATE customer SET remaining_price =  $remaining_price WHERE customer_id = '$customer_id'";
+        // $updateCustomer = "UPDATE customer SET remaining_price =  $remaining_price WHERE customer_id = '$customer_id'";
+        $updateCustomer = "UPDATE customer SET paid =  paid + $advance_payment WHERE customer_id = '$customer_id'";
         $resultCustomer = mysqli_query($connection, $updateCustomer);
-        $updateBooking = "UPDATE booking SET remaining_p = '$remaining_price' WHERE booking_id = '$booking_id'";
+        // $updateBooking = "UPDATE booking SET remaining_p = '$remaining_price' WHERE booking_id = '$booking_id'";
+        $updateBooking = "UPDATE booking SET payment = payment + $advance_payment WHERE booking_id = '$booking_id'";
         $result = mysqli_query($connection, $updateBooking);
         if ($resultCustomer) {
             $updatebook = "UPDATE booking SET checkin_status = '1' WHERE booking_id = '$booking_id'";
@@ -997,9 +999,9 @@ if (isset($_POST['check_out_room'])) {
 
         if ($remainingPrice == $remaining_amount) {
         // if ($remaining_price) {
-            $updateCustomer = "UPDATE customer SET remaining_price = '0',payment_status = '1' WHERE customer_id = '$customer_id'";
+            $updateCustomer = "UPDATE customer SET paid = paid + $remaining_amount,payment_status = '1' WHERE customer_id = '$customer_id'";
             $resultCustomer = mysqli_query($connection, $updateCustomer);
-            $updateBooking = "UPDATE booking SET remaining_p = '0',payment_stat = '1',checkin_status = '0',checkout_status = '1' WHERE booking_id = '$booking_id'";
+            $updateBooking = "UPDATE booking SET payment = payment + $remaining_amount,payment_stat = '1',checkin_status = '0',checkout_status = '1' WHERE booking_id = '$booking_id'";
             $result = mysqli_query($connection, $updateBooking);
             if ($result) {
                 $updateRoom = "UPDATE room SET status = NULL,check_in_status = '0',check_out_status = '1' WHERE room_id = '$room_id'";
@@ -1057,9 +1059,9 @@ if (isset($_POST['more_payment'])) {
         $remaining_price = $cus_details['total_price'] + $extras;
 
         if ($remaining_amount != 0 && isset($payment_type)) {
-            $updateCustomer = "UPDATE customer SET remaining_price =  remaining_price - $remaining_amount WHERE customer_id = '$customer_id'";
+            $updateCustomer = "UPDATE customer SET paid =  paid + $remaining_amount WHERE customer_id = '$customer_id'";
             $resultCustomer = mysqli_query($connection, $updateCustomer);
-            $updateBooking = "UPDATE booking SET remaining_p = remaining_p - $remaining_amount WHERE booking_id = '$booking_id'";
+            $updateBooking = "UPDATE booking SET payment = payment + $remaining_amount WHERE booking_id = '$booking_id'";
             $result = mysqli_query($connection, $updateBooking);
             if ($result) {
                 $paymentHistory = "INSERT INTO payment_history(booking_id,customer_id,payment_type,amount,added_by) VALUES ('$booking_id', '$customer_id', '$payment_type', '$remaining_amount', '$added_by')";
@@ -1757,7 +1759,6 @@ if (isset($_POST['item_edit'])) {
         $item = mysqli_fetch_assoc($result);
         $response['done'] = true;
         $response['item'] = $item['item'];
-        $response['quantity'] = $item['quantity'];
         $response['price'] = $item['price'];
         $response['item_id'] = $item['item_id'];
     } else {

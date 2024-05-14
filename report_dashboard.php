@@ -122,14 +122,14 @@
 						</div>
 					</div>
 				</div>
-				<!-- <div class="col-xs-6 col-md-4 col-lg-4 no-padding">
+				<div class="col-xs-6 col-md-4 col-lg-4 no-padding">
 					<div class="panel panel-orange panel-widget ">
 						<div class="row no-padding"><em class="fa fa-xl fa-credit-card color-purp"></em>
-							<div class="large">₦<-?php include 'counters/pendingpayment.php'?></div>
-							<div class="text-muted">Pending Payment</div>
+							<div id="tt_expen" class="large" ></div>
+							<div class="text-muted">Total Expenses</div>
 						</div>
 					</div>
-				</div> -->
+				</div>
 				<div class="col-xs-6 col-md-2 col-lg-2 no-padding">
 					
 				</div>
@@ -162,6 +162,7 @@
                     document.getElementById("hall_payment").innerHTML = data.hall_sales;
                     document.getElementById("hall_count").innerHTML = data.hall_count;
                     document.getElementById("tt_earn").innerHTML = data.total_earnings;
+                    document.getElementById("tt_expen").innerHTML = data.total_spend;
                 } else {
                     console.error("Failed to fetch data.");
                 }

@@ -295,19 +295,6 @@
                     </a>
                 </li>
             <?php }
-            if (isset($_GET['staff_mang'])){ ?>
-                <li class="active">
-                    <a href="index.php?staff_mang"><em class="fa fa-users">&nbsp;</em>
-                        Staff Section
-                    </a>
-                </li>
-            <?php } else{?>
-                <li>
-                    <a href="index.php?staff_mang"><em class="fa fa-users">&nbsp;</em>
-                        Staff Section
-                    </a>
-                </li>
-            <?php }
         }
         if(in_array($_SESSION['user_privilege'], $fouth_rule)) {
             if (isset($_GET['complain'])){ ?>

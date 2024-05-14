@@ -537,9 +537,7 @@ $(document).on("click", "#itemEdit", function (e) {
     success: function (response) {
       if (response.done == true) {
         $("#edit_item").val(response.item);
-        $("#edit_category").val(response.category);
         $("#edit_price").val(response.price);
-        $("#edit_quantity").val(response.quantity);
         $("#edit_item_id").val(item_id);
       } else {
         $(".edit_response").html(

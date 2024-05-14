@@ -1,5 +1,5 @@
 <?php
-$company_name="Lamonde By Somwhere Hotel Jos";
+$company_name="Lamonde By Somwhere Hotel";
 $company_address="16 Apollo Crescent, Jos Plateau State. Nigeria 930271";
 $company_phone="+234706765393";
 ?>
@@ -8,7 +8,7 @@ $company_phone="+234706765393";
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Hotel Management System- Dashboard</title>
+    <title>Lamonde by Somwhere Hotel</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/font-awesome.min.css" rel="stylesheet">
     <link href="css/datepicker3.css" rel="stylesheet">
